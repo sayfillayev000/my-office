@@ -8,6 +8,7 @@ class DashboardController extends Controller
 {
       public function index()
     {
+        dd(auth());
         return view('layouts.app');
     }
 }

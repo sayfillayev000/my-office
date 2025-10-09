@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('session_key_id', 255)->unique();
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
-
             $table->foreign('employee_id')->references('id')->on('Menyu_employee')->onDelete('cascade');
         });
     }

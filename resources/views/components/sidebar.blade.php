@@ -97,7 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadMenu() {
     try {
       // Cookie’dan session_key_id olamiz (agar bo‘lmasa fallback static)
-      const sessionKey = getCookie("session_id") || getCookie("session_key_id");
+      const sessionId = getCookie("sessionId") 
+      const sessionKey =  getCookie("my-office-session");
 
       if (!sessionKey) {
         sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Token topilmadi, qaytadan login qiling</li>";
@@ -109,7 +110,8 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          sessionid: sessionKey // 🚀 avval cookie’dagi id yuboramiz
+          sessionid 
+          sessionKey 
         })
       });
 

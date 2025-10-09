@@ -42,7 +42,7 @@
                           <p class="text-secondary">Enter your credential to login</p>
                         </div>
                         <div class="position-relative">
-                            <form method="POST" action="{{ route('login.submit') }}" id="login-form">
+                            <form method="POST" action="/backm/login" id="login-form">
                                 @csrf
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control @error('phone') is-invalid @enderror"

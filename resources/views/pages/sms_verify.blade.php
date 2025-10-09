@@ -35,7 +35,7 @@
             @endif
             <p class="text-muted">Telefon raqamingizga yuborilgan 4 xonali kodni kiriting</p>
 
-            <form method="POST" action="{{ route('sms.verify.submit') }}">
+            <form method="POST" action="/backm/sms-verify">
                 @csrf
                 <div class="form-floating mb-3">
                     <input type="text" 

@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use App\Models\MenyuEmployee;
 use App\Models\SmsCode;
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use App\Models\UserToken;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
@@ -18,32 +19,73 @@ class AuthController extends Controller
     {
         return view('pages.login');
     }
-
+    
     public function login(Request $request)
     {
-        $request->validate([
-            'phone' => 'required|digits:9',
+     // 1) Validate
+     $request->validate([
+        'phone' => 'required|digits:9',
+    ]);
+
+    Log::info('Login request started', ['phone' => $request->phone, 'ip' => $request->ip()]);
+
+    // 2) Find employee
+    $employee = MenyuEmployee::where('phone', $request->phone)->first();
+
+    if (!$employee) {
+        Log::warning('Login attempt with unknown phone', [
+            'phone' => $request->phone,
+            'ip' => $request->ip(),
         ]);
-        $employee = MenyuEmployee::where('phone', $request->phone)->first();
+        return back()->withErrors(['phone' => 'Telefon raqam topilmadi!'])->withInput();
+    }
 
-        if (!$employee) {
-            return back()->withErrors(['phone' => 'Telefon raqam topilmadi!'])->withInput();
-        }
+    Log::info('Employee found for login', [
+        'phone' => $request->phone,
+        'employee_id' => $employee->id ?? null,
+    ]);
 
-        $code = rand(1000, 9999);
+    // 3) Generate code
+    $code = rand(1000, 9999);
+    Log::debug('Generated SMS code', ['phone' => $request->phone, 'code' => $code]);
 
+    // 4) Remove old codes
+    try {
         SmsCode::where('phone', $request->phone)->delete();
+        Log::info('Old SMS codes deleted', ['phone' => $request->phone]);
+    } catch (\Throwable $e) {
+        Log::error('Failed to delete old SMS codes', [
+            'phone' => $request->phone,
+            'error' => $e->getMessage(),
+        ]);
+        // davom etamiz — lekin siz istasangiz bu yerda return yoki throw qilishingiz mumkin
+    }
 
+    // 5) Create new code (with error handling)
+    try {
         SmsCode::create([
             'phone' => $request->phone,
             'code'  => $code,
         ]);
-
-        Session::put('phone', $request->phone);
-        return redirect()->route('sms.verify')
-            ->with('status', 'SMS kod yuborildi!')
-            ->with('code', $code); 
+        Log::info('New SMS code stored', ['phone' => $request->phone]);
+    } catch (\Throwable $e) {
+        Log::error('Failed to create SMS code', [
+            'phone' => $request->phone,
+            'error' => $e->getMessage(),
+        ]);
+        return back()->withErrors(['phone' => 'SMS kodni saqlashda xatolik yuz berdi.'])->withInput();
     }
+
+    // 6) Sessionga yozish
+    Session::put('phone', $request->phone);
+    Log::info('Phone stored in session', ['phone' => $request->phone, 'session_id' => session()->getId()]);
+
+    // 7) Redirect — agar developmentda kodni ko'rishni istasangiz, logda 'code' bor; productionda buni olib tashlang.
+    return redirect('/backm/sms-verify')
+        ->with('status', 'SMS kod yuborildi!')
+        ->with('code', $code);
+}
+
 
     public function resendSms(Request $request)
     {
@@ -113,8 +155,9 @@ public function verifySms(Request $request)
         );
 
         Session::put('is_logged_in', true);
-
-        return redirect()->route('dashboard');
+        Auth::login($employee);
+        $request->session()->regenerate();
+        return redirect('/backs/user/profile');
     }
 
     return back()->withErrors(['code' => 'Kod noto‘g‘ri!']);
