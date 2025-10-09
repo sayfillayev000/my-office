@@ -27,7 +27,6 @@
 </head> 
 
   <body class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed theme-blue roundedui" data-theme="theme-blue" data-sidebarfill="adminuiux-sidebar-fill-white" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0">
-@include('components.pageloader')
       <main class="flex-shrink-0 pt-0 h-100">
         <div class="container-fluid">
           <div class="auth-wrapper">
@@ -42,34 +41,23 @@
                           <h1 class="mb-2">Welcome&#9996;</h1>
                           <p class="text-secondary">Enter your credential to login</p>
                         </div>
-
-                        <div class="form-floating mb-3">
-                          <input type="email" class="form-control" id="emailadd" placeholder="Enter email address" value="info@adminuiux" autofocus="">
-                          <label for="emailadd">Email Address</label>
-                        </div>
-
                         <div class="position-relative">
-                          <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="passwd" placeholder="Enter your password">
-                            <label for="passwd">Password</label>
-                          </div>
-                          <button class="btn btn-square btn-link text-theme-1 position-absolute end-0 top-0 mt-2 me-2 ">
-                            <i class="bi bi-eye"></i>
-                          </button>
+                            <form method="POST" action="{{ route('login.submit') }}" id="login-form">
+                                @csrf
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control @error('phone') is-invalid @enderror"
+                                        id="phone" name="phone" maxlength="19" required value="{{ old('phone') }}">
+                                    <label for="phone">Phone</label>
+
+                                    @error('phone')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <button type="submit" class="btn btn-lg btn-theme w-100 mb-3">Login</button>
+                            </form>
                         </div>
 
-                        <div class="row gx-3 align-items-center mb-3">
-                          <div class="col">
-                            <div class="form-check">
-                              <input class="form-check-input" type="checkbox" name="rememberme" id="rememberme">
-                              <label class="form-check-label" for="rememberme">Remember me</label>
-                            </div>
-                          </div>
-                          <div class="col-auto">
-                            <a href="investment-forgot-password.html" class=" ">Forget Password?</a>
-                          </div>
-                        </div>
-                        <a href="investment-dashboard.html" class="btn btn-lg btn-theme w-100 mb-3">Login</a>
+                    
                         <br>
                       </div>
                     </div>
@@ -119,7 +107,47 @@
           </div>
         </div>
       </main>
-      <!-- Page Level js -->
+      <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const phoneInput = document.getElementById("phone");
+    const form = document.getElementById("login-form");
+
+    // Dastlab +998 chiqib turadi
+    phoneInput.value = "+998 ";
+
+    phoneInput.addEventListener("input", function () {
+        let val = this.value;
+
+        // +998 ni o‘chirib bo‘lmaydi
+        if (!val.startsWith("+998 ")) {
+            val = "+998 ";
+        }
+
+        // Faqat raqamlarni olib qolamiz (prefixdan tashqari)
+        let digits = val.replace("+998", "").replace(/\D/g, "");
+
+        // 9 ta raqamdan ko‘p yozilmasin
+        digits = digits.substring(0, 9);
+
+        // Formatlash: 99 123 45 67
+        let formatted = "";
+        if (digits.length > 0) formatted = digits.substring(0, 2);
+        if (digits.length >= 3) formatted += " " + digits.substring(2, 5);
+        if (digits.length >= 6) formatted += " " + digits.substring(5, 7);
+        if (digits.length >= 8) formatted += " " + digits.substring(7, 9);
+
+        this.value = "+998 " + formatted.trim();
+    });
+
+    // Form yuborishda faqat 9 ta raqam ketadi
+    form.addEventListener("submit", function () {
+        let raw = phoneInput.value.replace(/\D/g, ""); // faqat raqam
+        let userPart = raw.substring(3); // +998 ni olib tashlaymiz
+        phoneInput.value = userPart; // backendga faqat 9 ta raqam ketadi
+    });
+});
+</script>
+
       <script src="https://my.synterra.uz/assets/js/investment/investment-auth.js"></script>
        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js" integrity="sha512-nKXmKvJyiGQy343jatQlzDprflyB5c+tKCzGP3Uq67v+lmzfnZUi/ZT+fc6ITZfSC5HhaBKUIvr/nTLCV+7F+Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   </body>

@@ -87,32 +87,54 @@
 document.addEventListener("DOMContentLoaded", () => {
   const sidebarMenu = document.getElementById("sidebar-menu");
 
+  // 🍪 Cookie olish funksiyasi
+  function getCookie(name) {
+    let value = `; ${document.cookie}`;
+    let parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  }
+
   async function loadMenu() {
     try {
+      // Cookie’dan session_key_id olamiz (agar bo‘lmasa fallback static)
+      const sessionKey = getCookie("session_id") || getCookie("session_key_id");
+
+      if (!sessionKey) {
+        sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Token topilmadi, qaytadan login qiling</li>";
+        return;
+      }
+
+      // API’ga so‘rov
       const response = await fetch("https://my.synterra.uz/backs/menu/get_list", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          sessionid: "ryd3wprsupdvp7pkt90srqni3o6fdf6z"
+          sessionid: sessionKey // 🚀 avval cookie’dagi id yuboramiz
         })
       });
 
       const data = await response.json();
 
-      if (!data) {
+      // 🔑 Agar API’da session_id qaytsa → uni ishlatamiz
+      const realSessionId = data?.session_id || "ryd3wprsupdvp7pkt90srqni3o6fdf6z";
+
+      // 🔄 API qaytgan menu bo‘sh bo‘lsa
+      if (!data || !data.menu) {
         sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Menu topilmadi</li>";
         return;
       }
 
-      renderMenu(data);
+      // Menuni render qilish
+      renderMenu(data.menu);
+
+      console.log("✅ Ishlatilgan session_id:", realSessionId);
     } catch (error) {
       console.error("Menu load error:", error);
       sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
     }
   }
 
+  // Menuni chizish
   function renderMenu(menu) {
     sidebarMenu.innerHTML = "";
 
@@ -134,3 +156,5 @@ document.addEventListener("DOMContentLoaded", () => {
   loadMenu();
 });
 </script>
+
+
