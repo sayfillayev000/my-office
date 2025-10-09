@@ -87,68 +87,57 @@
 document.addEventListener("DOMContentLoaded", () => {
   const sidebarMenu = document.getElementById("sidebar-menu");
 
-  // 🍪 Cookie olish funksiyasi
   function getCookie(name) {
     let value = `; ${document.cookie}`;
     let parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(";").shift();
   }
 
-  async function loadMenu() {
-    try {
-      // Cookie’dan session_key_id olamiz (agar bo‘lmasa fallback static)
-      const sessionKey = getCookie("session_id") || getCookie("session_key_id");
+async function loadMenu() {
+  try {
+    const appName = @json(config('app.name'));
+    const laravelSessionName = appName + "_session";
 
-      if (!sessionKey) {
-        sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Token topilmadi, qaytadan login qiling</li>";
-        return;
-      }
-
-      // API’ga so‘rov
-      const response = await fetch("https://my.synterra.uz/backs/menu/get_list", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionid: sessionKey // 🚀 avval cookie’dagi id yuboramiz
-        })
-      });
-
-      const data = await response.json();
-
-      // 🔑 Agar API’da session_id qaytsa → uni ishlatamiz
-      const realSessionId = data?.session_id || "ryd3wprsupdvp7pkt90srqni3o6fdf6z";
-
-      // 🔄 API qaytgan menu bo‘sh bo‘lsa
-      if (!data || !data.menu) {
-        sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Menu topilmadi</li>";
-        return;
-      }
-
-      // Menuni render qilish
-      renderMenu(data.menu);
-
-      console.log("✅ Ishlatilgan session_id:", realSessionId);
-    } catch (error) {
-      console.error("Menu load error:", error);
-      sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
+    if (!sessionKey) {
+      sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Token topilmadi, qaytadan login qiling</li>";
+      return;
     }
-  }
 
-  // Menuni chizish
+    const response = await fetch("https://my.synterra.uz/backs/menu/get_list", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // <-- muhim: Laravel session cookie yuboriladi
+      body: JSON.stringify({
+        sessionKey: sessionKey
+      })
+    });
+
+    const data = await response.json();
+
+    if (!data || !data.menu) {
+      sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Menu topilmadi</li>";
+      return;
+    }
+
+    renderMenu(data.menu);
+    console.log("✅ Session Laravel orqali ishladi");
+  } catch (error) {
+    console.error("Menu load error:", error);
+    sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
+  }
+}
+
   function renderMenu(menu) {
     sidebarMenu.innerHTML = "";
-
     Object.values(menu).forEach(m => {
       const li = document.createElement("li");
       li.className = "nav-item";
-
       li.innerHTML = `
         <a href="${m.path}" class="nav-link d-flex align-items-center">
           <span class="me-2">${m.svg_icon}</span>
           <span class="menu-name">${m.name}</span>
         </a>
       `;
-
       sidebarMenu.appendChild(li);
     });
   }

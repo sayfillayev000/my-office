@@ -10,7 +10,6 @@ use App\Models\SmsCode;
 
 use App\Models\UserToken;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
@@ -104,21 +103,22 @@ public function verifySms(Request $request)
         UserToken::create([
             'employee_id'   => $employee->id,
             'session_key_id'=> $token,
-            'expires_at'    => now()->addDays(7), // 7 kun amal qiladi
+            'expires_at'    => now()->addDays(7),
         ]);
 
-        // Cookie-ga yozamiz (HTTP-only, Secure)
-        Cookie::queue(
-            Cookie::make('session_key_id', $token, 60*24*7, null, null, true, true, false, 'Strict')
-        );
+        // Laravel session ID yangilash
+        $request->session()->regenerate();
 
+        // foydalanuvchini session orqali tanib olish uchun yozamiz
+        Session::put('employee_id', $employee->id);
         Session::put('is_logged_in', true);
 
         return redirect()->route('dashboard');
     }
 
-    return back()->withErrors(['code' => 'Kod noto‘g‘ri!']);
+    return back()->withErrors(['code' => 'Kod noto‘g‘ri yoki muddati tugagan!']);
 }
+
 
 
 }
