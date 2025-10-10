@@ -93,6 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (parts.length === 2) return parts.pop().split(";").shift();
   }
 
+<<<<<<< HEAD
 async function loadMenu() {
   try {
     const appName = @json(config('app.name'));
@@ -101,6 +102,47 @@ async function loadMenu() {
     if (!sessionKey) {
       sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Token topilmadi, qaytadan login qiling</li>";
       return;
+=======
+  async function loadMenu() {
+    try {
+      // Cookie’dan session_key_id olamiz (agar bo‘lmasa fallback static)
+      const sessionId = getCookie("sessionId") 
+      const sessionKey =  getCookie("my-office-session");
+
+      if (!sessionKey) {
+        sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Token topilmadi, qaytadan login qiling</li>";
+        return;
+      }
+
+      // API’ga so‘rov
+      const response = await fetch("https://my.synterra.uz/backs/menu/get_list", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionid 
+          sessionKey 
+        })
+      });
+
+      const data = await response.json();
+
+      // 🔑 Agar API’da session_id qaytsa → uni ishlatamiz
+      const realSessionId = data?.session_id || "ryd3wprsupdvp7pkt90srqni3o6fdf6z";
+
+      // 🔄 API qaytgan menu bo‘sh bo‘lsa
+      if (!data || !data.menu) {
+        sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Menu topilmadi</li>";
+        return;
+      }
+
+      // Menuni render qilish
+      renderMenu(data.menu);
+
+      console.log("✅ Ishlatilgan session_id:", realSessionId);
+    } catch (error) {
+      console.error("Menu load error:", error);
+      sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
+>>>>>>> master
     }
 
     const response = await fetch("https://my.synterra.uz/backs/menu/get_list", {

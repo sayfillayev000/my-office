@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('middle_name');
             $table->string('department');
             $table->string('position');
-            $table->integer('phone');
+            $table->string('phone', 20);
             $table->longText('image');
             $table->integer('floor');
             $table->integer('room');

@@ -2,47 +2,60 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    protected $table = 'Menyu_employee';
+
     protected $fillable = [
-        'name',
-        'email',
+        'first_name',
+        'last_name',
+        'middle_name',
+        'department',
+        'position',
+        'phone',
+        'image',
+        'floor',
+        'room',
+        'embedding',
+        'parking',
+        'office',
+        'worker_and_time',
+        'organization_id',
+        'night_working',
+        'tashkilot',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'parking' => 'boolean',
+            'office' => 'boolean',
+            'night_working' => 'boolean',
+            'worker_and_time' => 'float',
         ];
     }
+
+    public function username()
+    {
+        return 'phone';
+    }
+    public function organization()
+    {
+        return $this->belongsTo(MenyuOrganization::class, 'organization_id');
+    }
+
 }
