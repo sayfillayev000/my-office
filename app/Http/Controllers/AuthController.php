@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,7 @@ class AuthController extends Controller
 {
 
     public function showLogin(){
+
         return view('pages.login');
     }
     public function login(Request $request)
@@ -52,7 +54,7 @@ class AuthController extends Controller
             'code' => $code
         ]);
 
-        return redirect()->route('sms.verify')
+        return redirect()->to('backm/sms-verify')
             ->with('status', 'SMS kod yuborildi!')
             ->with('code', $code); // dev/test uchun
     }
@@ -60,7 +62,7 @@ class AuthController extends Controller
     public function showSmsVerify()
     {
         if (!Session::has('phone')) {
-            return redirect()->route('login');
+            return redirect()->to('/login');
         }
         return view('pages.sms_verify');
     }
@@ -69,7 +71,7 @@ class AuthController extends Controller
         $phone = Session::get('phone');
 
         if (!$phone) {
-            return redirect()->route('login')->withErrors(['phone' => 'Avval login qiling!']);
+            return redirect()->to('/backm/login')->withErrors(['phone' => 'Avval login qiling!']);
         }
 
         $code = rand(1000, 9999);
@@ -82,36 +84,46 @@ class AuthController extends Controller
         return back()->with('status', 'Yangi SMS kod yuborildi!')
                     ->with('code', $code); 
     }
+public function verifySms(Request $request)
+{
+    $request->validate([
+        'code' => 'required|digits:4',
+    ]);
 
-    public function verifySms(Request $request)
-    {
-        $request->validate([
-            'code' => 'required|digits:4',
-        ]);
+    $phone   = Session::get('phone');
+    $orgId   = Session::get('organization_id');
+    $code    = Session::get('sms_code');
+    $expires = Session::get('sms_expires');
 
-        $phone = Session::get('phone');
-        $orgId = Session::get('organization_id');
-        $code  = Session::get('sms_code');
-        $expires = Session::get('sms_expires');
+    if ($request->code == $code && now()->lessThan($expires)) {
+        $employee = User::where('phone', $phone)
+                        ->where('organization_id', $orgId)
+                        ->first();
 
-        if ($request->code == $code && now()->lessThan($expires)) {
-            $employee = User::where('phone', $phone)
-                            ->where('organization_id', $orgId)
-                            ->first();
-
-            if (!$employee) {
-                return back()->withErrors(['code' => 'Foydalanuvchi topilmadi!']);
-            }
-
-            $request->session()->regenerate();
-            Auth::login($employee);
-            Session::forget(['sms_code', 'sms_expires']);
-
-            return redirect()->route('dashboard');
+        if (!$employee) {
+            return back()->withErrors(['code' => 'Foydalanuvchi topilmadi!']);
         }
 
-        return back()->withErrors(['code' => 'Kod noto‘g‘ri yoki muddati tugagan!']);
+        Auth::login($employee);
+        $request->session()->regenerate();
+
+        // 🔥 Session jadvalini o‘zgartirmaymiz — o‘z jadvalimizga yozamiz
+        UserSession::updateOrCreate(
+            ['session_id' => Session::getId()],
+            [
+                'user_id' => $employee->id,
+                'organization_id' => $orgId,
+            ]
+        );
+
+        Session::forget(['sms_code', 'sms_expires']);
+
+        return redirect()->to('/backm');
     }
+
+    return back()->withErrors(['code' => 'Kod noto‘g‘ri yoki muddati tugagan!']);
+}
+
 
 
 }
