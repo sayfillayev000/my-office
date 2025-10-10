@@ -1,114 +1,61 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\DB;
-use App\Models\MenyuEmployee;
-use App\Models\SmsCode;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use App\Models\UserToken;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
-    public function showLogin()
-    {
+
+    public function showLogin(){
         return view('pages.login');
     }
-    
     public function login(Request $request)
     {
-     // 1) Validate
-     $request->validate([
-        'phone' => 'required|digits:9',
-    ]);
-
-    Log::info('Login request started', ['phone' => $request->phone, 'ip' => $request->ip()]);
-
-    // 2) Find employee
-    $employee = MenyuEmployee::where('phone', $request->phone)->first();
-
-    if (!$employee) {
-        Log::warning('Login attempt with unknown phone', [
-            'phone' => $request->phone,
-            'ip' => $request->ip(),
+        $request->validate([
+            'phone' => 'required|digits:9',
         ]);
-        return back()->withErrors(['phone' => 'Telefon raqam topilmadi!'])->withInput();
-    }
 
-    Log::info('Employee found for login', [
-        'phone' => $request->phone,
-        'employee_id' => $employee->id ?? null,
-    ]);
+        // 1. Subdomain olish
+        $host = $request->getHost(); // masalan: org1.yoursite.com
+        $subdomain = explode('.', $host)[0]; // org1
 
-    // 3) Generate code
-    $code = rand(1000, 9999);
-    Log::debug('Generated SMS code', ['phone' => $request->phone, 'code' => $code]);
-
-    // 4) Remove old codes
-    try {
-        SmsCode::where('phone', $request->phone)->delete();
-        Log::info('Old SMS codes deleted', ['phone' => $request->phone]);
-    } catch (\Throwable $e) {
-        Log::error('Failed to delete old SMS codes', [
-            'phone' => $request->phone,
-            'error' => $e->getMessage(),
-        ]);
-        // davom etamiz — lekin siz istasangiz bu yerda return yoki throw qilishingiz mumkin
-    }
-
-    // 5) Create new code (with error handling)
-    try {
-        SmsCode::create([
-            'phone' => $request->phone,
-            'code'  => $code,
-        ]);
-        Log::info('New SMS code stored', ['phone' => $request->phone]);
-    } catch (\Throwable $e) {
-        Log::error('Failed to create SMS code', [
-            'phone' => $request->phone,
-            'error' => $e->getMessage(),
-        ]);
-        return back()->withErrors(['phone' => 'SMS kodni saqlashda xatolik yuz berdi.'])->withInput();
-    }
-
-    // 6) Sessionga yozish
-    Session::put('phone', $request->phone);
-    Log::info('Phone stored in session', ['phone' => $request->phone, 'session_id' => session()->getId()]);
-
-    // 7) Redirect — agar developmentda kodni ko'rishni istasangiz, logda 'code' bor; productionda buni olib tashlang.
-    return redirect('/backm/sms-verify')
-        ->with('status', 'SMS kod yuborildi!')
-        ->with('code', $code);
-}
-
-
-    public function resendSms(Request $request)
-    {
-        $phone = Session::get('phone');
-
-        if (!$phone) {
-            return redirect()->route('login')->withErrors(['phone' => 'Avval telefon raqam kiriting!']);
+        // 2. Organization check
+        $organization = \App\Models\MenyuOrganization::where('subdomain', $subdomain)->first();
+        if (!$organization) {
+            return back()->withErrors(['domain' => 'Subdomain topilmadi!']);
         }
 
-        SmsCode::where('phone', $phone)->delete();
+        // 3. Foydalanuvchini organization_id bo‘yicha tekshirish
+        $employee = User::where('phone', $request->phone)
+                        ->where('organization_id', $organization->id)
+                        ->first();
 
+        if (!$employee) {
+            return back()->withErrors(['phone' => 'Ushbu tashkilotda bunday foydalanuvchi topilmadi!']);
+        }
+
+        // 4. SMS kod yaratish
         $code = rand(1000, 9999);
 
-        SmsCode::create([
-            'phone' => $phone,
-            'code'  => $code,
+        Session::put('phone', $request->phone);
+        Session::put('organization_id', $organization->id);
+        Session::put('sms_code', $code);
+        Session::put('sms_expires', now()->addMinutes(5));
+
+        \Log::info("SMS code generated", [
+            'phone' => $request->phone,
+            'organization_id' => $organization->id,
+            'code' => $code
         ]);
 
-        return back()
-            ->with('status', 'Yangi SMS kod yuborildi!')
-            ->with('code', $code); 
+        return redirect()->route('sms.verify')
+            ->with('status', 'SMS kod yuborildi!')
+            ->with('code', $code); // dev/test uchun
     }
-
 
     public function showSmsVerify()
     {
@@ -117,51 +64,54 @@ class AuthController extends Controller
         }
         return view('pages.sms_verify');
     }
+    public function resendSms(Request $request)
+    {
+        $phone = Session::get('phone');
 
+        if (!$phone) {
+            return redirect()->route('login')->withErrors(['phone' => 'Avval login qiling!']);
+        }
 
+        $code = rand(1000, 9999);
 
-public function verifySms(Request $request)
-{
-    $request->validate([
-        'code' => 'required|digits:4'
-    ]);
+        Session::put('sms_code', $code);
+        Session::put('sms_expires', now()->addMinutes(5));
 
-    $phone = Session::get('phone');
+        Log::info("Resend SMS code", ['phone' => $phone, 'code' => $code]);
 
-    $sms = SmsCode::where('phone', $phone)
-        ->where('code', $request->code)
-        ->first();
-
-    if ($sms) {
-        $sms->delete();
-
-        $employee = MenyuEmployee::where('phone', $phone)->first();
-
-        // eski tokenlarni o‘chir
-        UserToken::where('employee_id', $employee->id)->delete();
-
-        // yangi token yarat
-        $token = Str::random(40);
-
-        UserToken::create([
-            'employee_id'   => $employee->id,
-            'session_key_id'=> $token,
-            'expires_at'    => now()->addDays(7), // 7 kun amal qiladi
-        ]);
-
-        // Cookie-ga yozamiz (HTTP-only, Secure)
-        Cookie::queue(
-            Cookie::make('session_key_id', $token, 60*24*7, null, null, true, true, false, 'Strict')
-        );
-
-        Session::put('is_logged_in', true);
-        Auth::login($employee);
-        $request->session()->regenerate();
-        return redirect('/backs/user/profile');
+        return back()->with('status', 'Yangi SMS kod yuborildi!')
+                    ->with('code', $code); 
     }
 
-    return back()->withErrors(['code' => 'Kod noto‘g‘ri!']);
-}
+    public function verifySms(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|digits:4',
+        ]);
+
+        $phone = Session::get('phone');
+        $orgId = Session::get('organization_id');
+        $code  = Session::get('sms_code');
+        $expires = Session::get('sms_expires');
+
+        if ($request->code == $code && now()->lessThan($expires)) {
+            $employee = User::where('phone', $phone)
+                            ->where('organization_id', $orgId)
+                            ->first();
+
+            if (!$employee) {
+                return back()->withErrors(['code' => 'Foydalanuvchi topilmadi!']);
+            }
+
+            $request->session()->regenerate();
+            Auth::login($employee);
+            Session::forget(['sms_code', 'sms_expires']);
+
+            return redirect()->route('dashboard');
+        }
+
+        return back()->withErrors(['code' => 'Kod noto‘g‘ri yoki muddati tugagan!']);
+    }
 
 
 }

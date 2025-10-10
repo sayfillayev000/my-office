@@ -87,13 +87,22 @@
 document.addEventListener("DOMContentLoaded", () => {
   const sidebarMenu = document.getElementById("sidebar-menu");
 
-  // 🍪 Cookie olish funksiyasi
   function getCookie(name) {
     let value = `; ${document.cookie}`;
     let parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(";").shift();
   }
 
+<<<<<<< HEAD
+async function loadMenu() {
+  try {
+    const appName = @json(config('app.name'));
+    const laravelSessionName = appName + "_session";
+
+    if (!sessionKey) {
+      sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Token topilmadi, qaytadan login qiling</li>";
+      return;
+=======
   async function loadMenu() {
     try {
       // Cookie’dan session_key_id olamiz (agar bo‘lmasa fallback static)
@@ -133,24 +142,44 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error("Menu load error:", error);
       sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
+>>>>>>> master
     }
-  }
 
-  // Menuni chizish
+    const response = await fetch("https://my.synterra.uz/backs/menu/get_list", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // <-- muhim: Laravel session cookie yuboriladi
+      body: JSON.stringify({
+        sessionKey: sessionKey
+      })
+    });
+
+    const data = await response.json();
+
+    if (!data || !data.menu) {
+      sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Menu topilmadi</li>";
+      return;
+    }
+
+    renderMenu(data.menu);
+    console.log("✅ Session Laravel orqali ishladi");
+  } catch (error) {
+    console.error("Menu load error:", error);
+    sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
+  }
+}
+
   function renderMenu(menu) {
     sidebarMenu.innerHTML = "";
-
     Object.values(menu).forEach(m => {
       const li = document.createElement("li");
       li.className = "nav-item";
-
       li.innerHTML = `
         <a href="${m.path}" class="nav-link d-flex align-items-center">
           <span class="me-2">${m.svg_icon}</span>
           <span class="menu-name">${m.name}</span>
         </a>
       `;
-
       sidebarMenu.appendChild(li);
     });
   }

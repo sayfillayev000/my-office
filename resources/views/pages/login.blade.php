@@ -42,7 +42,7 @@
                           <p class="text-secondary">Enter your credential to login</p>
                         </div>
                         <div class="position-relative">
-                            <form method="POST" action="/backm/login" id="login-form">
+                            <form method="POST" action="/login" id="login-form">
                                 @csrf
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control @error('phone') is-invalid @enderror"
@@ -107,46 +107,40 @@
           </div>
         </div>
       </main>
-      <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const phoneInput = document.getElementById("phone");
-    const form = document.getElementById("login-form");
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const phoneInput = document.getElementById("phone");
+            const form = document.getElementById("login-form");
 
-    // Dastlab +998 chiqib turadi
-    phoneInput.value = "+998 ";
+            phoneInput.value = "+998 ";
 
-    phoneInput.addEventListener("input", function () {
-        let val = this.value;
+            phoneInput.addEventListener("input", function () {
+                let val = this.value;
 
-        // +998 ni o‘chirib bo‘lmaydi
-        if (!val.startsWith("+998 ")) {
-            val = "+998 ";
-        }
+                if (!val.startsWith("+998 ")) {
+                    val = "+998 ";
+                }
 
-        // Faqat raqamlarni olib qolamiz (prefixdan tashqari)
-        let digits = val.replace("+998", "").replace(/\D/g, "");
+                let digits = val.replace("+998", "").replace(/\D/g, "");
 
-        // 9 ta raqamdan ko‘p yozilmasin
-        digits = digits.substring(0, 9);
+                digits = digits.substring(0, 9);
 
-        // Formatlash: 99 123 45 67
-        let formatted = "";
-        if (digits.length > 0) formatted = digits.substring(0, 2);
-        if (digits.length >= 3) formatted += " " + digits.substring(2, 5);
-        if (digits.length >= 6) formatted += " " + digits.substring(5, 7);
-        if (digits.length >= 8) formatted += " " + digits.substring(7, 9);
+                let formatted = "";
+                if (digits.length > 0) formatted = digits.substring(0, 2);
+                if (digits.length >= 3) formatted += " " + digits.substring(2, 5);
+                if (digits.length >= 6) formatted += " " + digits.substring(5, 7);
+                if (digits.length >= 8) formatted += " " + digits.substring(7, 9);
 
-        this.value = "+998 " + formatted.trim();
-    });
+                this.value = "+998 " + formatted.trim();
+            });
 
-    // Form yuborishda faqat 9 ta raqam ketadi
-    form.addEventListener("submit", function () {
-        let raw = phoneInput.value.replace(/\D/g, ""); // faqat raqam
-        let userPart = raw.substring(3); // +998 ni olib tashlaymiz
-        phoneInput.value = userPart; // backendga faqat 9 ta raqam ketadi
-    });
-});
-</script>
+            form.addEventListener("submit", function () {
+                let raw = phoneInput.value.replace(/\D/g, ""); 
+                let userPart = raw.substring(3); 
+                phoneInput.value = userPart; 
+            });
+        });
+    </script>
 
       <script src="https://my.synterra.uz/assets/js/investment/investment-auth.js"></script>
        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js" integrity="sha512-nKXmKvJyiGQy343jatQlzDprflyB5c+tKCzGP3Uq67v+lmzfnZUi/ZT+fc6ITZfSC5HhaBKUIvr/nTLCV+7F+Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
