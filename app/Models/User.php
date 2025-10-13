@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     protected $table = 'Menyu_employee';
 
@@ -56,6 +57,24 @@ class User extends Authenticatable
     public function organization()
     {
         return $this->belongsTo(MenyuOrganization::class, 'organization_id');
+    }
+    public function organizations()
+    {
+        return $this->belongsToMany(
+            MenyuOrganization::class,
+            'organization_user_role',
+            'user_id',
+            'organization_id'
+        )->withPivot('role_id')->withTimestamps();
+    }
+
+
+    public function rolesInOrganization($orgId)
+    {
+        return $this->organizations()
+                    ->wherePivot('organization_id', $orgId)
+                    ->get()
+                    ->map(fn($org) => \Spatie\Permission\Models\Role::find($org->pivot->role_id));
     }
 
 }
