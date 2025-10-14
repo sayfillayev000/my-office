@@ -32,42 +32,56 @@
 document.addEventListener("DOMContentLoaded", () => {
   const sidebarMenu = document.getElementById("sidebar-menu");
   const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  const baseUrl = document.querySelector('meta[name="base-url"]').getAttribute('content');
+
+  // Cookie-dan olish funksiyasi
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  }
 
   async function loadMenu() {
     try {
-      const response = await fetch("/proxy/menu", {
+      // Cookie-lardan session olamiz
+      const sessionId = getCookie('sessionid');
+      const officeSession = getCookie('my-office-session');
+
+      // Agar cookie yo'q bo'lsa
+      if (!sessionId && !officeSession) {
+        sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Session topilmadi</li>";
+        return;
+      }
+
+      // Fetch request yuboramiz
+      const response = await fetch(baseUrl + "/proxy/menu", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-TOKEN": token
+          "X-CSRF-TOKEN": token,
+          "Content-Type": "application/json"
         },
-        credentials: "include"
+        credentials: "include" // cookie-larni avtomatik yuborish uchun muhim
       });
 
       const data = await response.json();
       console.log("API javob:", data);
 
-      // ❌ Bu joy noto‘g‘ri edi
-      // if (!data || !data.menu) {
       if (!data || Object.keys(data).length === 0) {
-        sidebarMenu.innerHTML =
-          "<li class='text-danger p-3'>❌ Menu topilmadi</li>";
+        sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Menu topilmadi</li>";
         return;
       }
 
-      // renderMenu(data.menu) emas
       renderMenu(data);
 
     } catch (error) {
       console.error("Menu load error:", error);
-      sidebarMenu.innerHTML =
-        "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
+      sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
     }
   }
 
   function renderMenu(menu) {
     sidebarMenu.innerHTML = "";
-
     Object.values(menu).forEach(m => {
       const li = document.createElement("li");
       li.className = "nav-item";
@@ -81,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Page ochilgan zahoti menu yuklanadi
   loadMenu();
 });
 </script>

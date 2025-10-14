@@ -63,7 +63,7 @@
                     <div class="col-12 col-md-6 col-xl-8 p-4 d-none d-md-block">
                         <div class="card adminuiux-card bg-theme-1-space position-relative overflow-hidden h-100">
                             <div class="position-absolute start-0 top-0 h-100 w-100 coverimg opacity-75">
-                                <img src="assets/img/background-image/backgorund-image-8.jpg" alt="">
+                                <img src="https://my.synterra.uz/assets/img/background-image/backgorund-image-8.jpg" alt="">
                             </div>
                             <div class="card-body position-relative z-index-1">
                                 <div class="row h-100 d-flex flex-column justify-content-center align-items-center text-center">
@@ -71,12 +71,12 @@
                                         <div class="swiper swipernavpagination pb-5">
                                             <div class="swiper-wrapper">
                                                 <div class="swiper-slide">
-                                                    <img src="assets/img/investment/slider.png" class="mw-100 mb-3">
+                                                    <img src="https://my.synterra.uz/assets/img/investment/slider.png" class="mw-100 mb-3">
                                                     <h2 class="text-white mb-3">Create and Manage your Investment appointments easily.</h2>
                                                     <p class="lead opacity-75">Adminuiux Investment UX demo preview</p>
                                                 </div>
                                                 <div class="swiper-slide">
-                                                    <img src="assets/img/investment/slider.png" class="mw-100 mb-3">
+                                                    <img src="https://my.synterra.uz/assets/img/investment/slider.png" class="mw-100 mb-3">
                                                     <h2 class="text-white mb-3">Track and manage investments easily.</h2>
                                                     <p class="lead opacity-75">You are at the best UX demo preview</p>
                                                 </div>
