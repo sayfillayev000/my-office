@@ -22,7 +22,6 @@ return [
     |
     */
     'project_name' => env('PROJECT_NAME', 'local'),
-
     /*
     |--------------------------------------------------------------------------
     | Application Environment

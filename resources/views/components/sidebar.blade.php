@@ -1,3 +1,5 @@
+{{-- sidebar.blade.php --}}
+
 <div class="adminuiux-sidebar">
   <div class="adminuiux-sidebar-inner">
     <div class="px-3 not-iconic mt-2">
@@ -20,157 +22,52 @@
       </div>
     </div>
 
+    {{-- Menu joyi --}}
     <ul id="sidebar-menu" class="nav flex-column menu-active-line"></ul>
 
     <div class="mt-auto"></div>
   </div>
 </div>
- <main class="adminuiux-content has-sidebar" onclick="contentClick()"> 
- 
-        <!-- breadcrumb --> 
-        <div class="container-fluid mt-3"> 
-        </div> 
- 
-        <!-- content --> 
-        <div class="container mt-3" id="main-content"> 
-        </div> 
- 
-        <!-- mobile footer --> 
-        <footer class="adminuiux-mobile-footer hide-on-scrolldown style-2"> 
-            <div class="container"> 
-                <ul class="nav nav-pills nav-justified"> 
-                    <li class="nav-item"> 
-                        <a class="nav-link" href="#"> 
-                    <span> 
-                        <i class="nav-icon" data-feather="home"></i> 
-                        <span class="nav-text">Home</span> 
-                    </span> 
-                        </a> 
-                    </li> 
-                    <li class="nav-item"> 
-                        <a class="nav-link" href="#"> 
-                    <span> 
-                        <i class="nav-icon bi bi-wallet"></i> 
-                        <span class="nav-text">Wallet</span> 
-                    </span> 
-                        </a> 
-                    </li> 
-                    <li class="nav-item"> 
-                        <a href="#" class="nav-link "> 
-                    <span> 
-                        <i class="nav-icon" data-feather="target"></i> 
-                        <span class="nav-text">Goals</span> 
-                    </span> 
-                        </a> 
-                    </li> 
-                    <li class="nav-item"> 
-                        <a class="nav-link" href="#"> 
-                    <span> 
-                        <i class="nav-icon" data-feather="users"></i> 
-                        <span class="nav-text">Statistic</span> 
-                    </span> 
-                        </a> 
-                    </li> 
-                    <li class="nav-item"> 
-                        <a class="nav-link" href="#"> 
-                    <span> 
-                        <i class="nav-icon bi bi-calculator"></i> 
-                        <span class="nav-text">Calc.</span> 
-                    </span> 
-                        </a> 
-                    </li> 
-                </ul> 
-            </div> 
-        </footer> 
-</main> 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const sidebarMenu = document.getElementById("sidebar-menu");
+  const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-  function getCookie(name) {
-    let value = `; ${document.cookie}`;
-    let parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-  }
-
-<<<<<<< HEAD
-async function loadMenu() {
-  try {
-    const appName = @json(config('app.name'));
-    const laravelSessionName = appName + "_session";
-
-    if (!sessionKey) {
-      sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Token topilmadi, qaytadan login qiling</li>";
-      return;
-=======
   async function loadMenu() {
     try {
-      // Cookie’dan session_key_id olamiz (agar bo‘lmasa fallback static)
-      const sessionId = getCookie("sessionId") 
-      const sessionKey =  getCookie("my-office-session");
-
-      if (!sessionKey) {
-        sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Token topilmadi, qaytadan login qiling</li>";
-        return;
-      }
-
-      // API’ga so‘rov
-      const response = await fetch("https://my.synterra.uz/backs/menu/get_list", {
+      const response = await fetch("/proxy/menu", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionid 
-          sessionKey 
-        })
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": token
+        },
+        credentials: "include"
       });
 
       const data = await response.json();
+      console.log("API javob:", data);
 
-      // 🔑 Agar API’da session_id qaytsa → uni ishlatamiz
-      const realSessionId = data?.session_id || "ryd3wprsupdvp7pkt90srqni3o6fdf6z";
-
-      // 🔄 API qaytgan menu bo‘sh bo‘lsa
-      if (!data || !data.menu) {
-        sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Menu topilmadi</li>";
+      // ❌ Bu joy noto‘g‘ri edi
+      // if (!data || !data.menu) {
+      if (!data || Object.keys(data).length === 0) {
+        sidebarMenu.innerHTML =
+          "<li class='text-danger p-3'>❌ Menu topilmadi</li>";
         return;
       }
 
-      // Menuni render qilish
-      renderMenu(data.menu);
+      // renderMenu(data.menu) emas
+      renderMenu(data);
 
-      console.log("✅ Ishlatilgan session_id:", realSessionId);
     } catch (error) {
       console.error("Menu load error:", error);
-      sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
->>>>>>> master
+      sidebarMenu.innerHTML =
+        "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
     }
-
-    const response = await fetch("https://my.synterra.uz/backs/menu/get_list", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include", // <-- muhim: Laravel session cookie yuboriladi
-      body: JSON.stringify({
-        sessionKey: sessionKey
-      })
-    });
-
-    const data = await response.json();
-
-    if (!data || !data.menu) {
-      sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Menu topilmadi</li>";
-      return;
-    }
-
-    renderMenu(data.menu);
-    console.log("✅ Session Laravel orqali ishladi");
-  } catch (error) {
-    console.error("Menu load error:", error);
-    sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
   }
-}
 
   function renderMenu(menu) {
     sidebarMenu.innerHTML = "";
+
     Object.values(menu).forEach(m => {
       const li = document.createElement("li");
       li.className = "nav-item";
@@ -187,5 +84,4 @@ async function loadMenu() {
   loadMenu();
 });
 </script>
-
 
