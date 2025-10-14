@@ -17,15 +17,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap-grid.min.css" integrity="sha512-dOjUSaLkr6G2pwQ7ry9juX+iXw5602zg1kg8yH+guR3uSEidGyCnOEQnGlr7xwu/8WE+pVm1ZNqaIs5ETTIJQg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <style>
+        :root {
+            --adminuiux-content-font: 'Roboto';
+            --adminuiux-content-font-weight: 400;
+            --adminuiux-title-font: "Fira Sans Condensed";
+            --adminuiux-title-font-weight: 500;
+        }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@100;400;500;600&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet"> 
-    <style> 
-        :root { 
-            --adminuiux-content-font: 'Roboto'; 
-            --adminuiux-content-font-weight: 400; 
-            --adminuiux-title-font: "Fira Sans Condensed"; 
-            --adminuiux-title-font-weight: 500; 
-        } 
-    </style> 
+
+    <script defer src="assets/js/app.js?7e4316178ad989670ad8"></script><link href="assets/css/app.css?7e4316178ad989670ad8" rel="stylesheet"></head>
  
     <script defer src="https://my.synterra.uz/assets/js/app.js?7e4316178ad989670ad8"></script><link href="https://my.synterra.uz/assets/css/app.css?7e4316178ad989670ad8" rel="stylesheet"> 
 </head> 
