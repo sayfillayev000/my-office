@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('organization_user_role', function (Blueprint $table) {
             $table->id();
 
-            // Foreign key nomini organization_id qilib yoz
             $table->foreignId('organization_id')
                 ->constrained('Menyu_organization')
                 ->cascadeOnDelete();

@@ -125,7 +125,7 @@ class AuthController extends Controller
 
             Session::forget(['sms_code', 'sms_expires']);
 
-            return redirect()->to($this->baseUrl('/'));
+            return redirect()->to($this->baseUrl('/dashboard'));
         }
 
         return back()->withErrors(['code' => 'Kod noto‘g‘ri yoki muddati tugagan!']);
