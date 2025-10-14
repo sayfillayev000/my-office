@@ -23,7 +23,9 @@
     </div>
 
     {{-- Menu joyi --}}
-    <ul id="sidebar-menu" class="nav flex-column menu-active-line"></ul>
+    <ul id="sidebar-menu" class="nav flex-column menu-active-line">
+    
+    </ul>
 
     <div class="mt-auto"></div>
   </div>
@@ -65,23 +67,40 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function renderMenu(menu) {
+function renderMenu(menu) {
+    const sidebarMenu = document.getElementById("sidebar-menu");
     sidebarMenu.innerHTML = "";
 
-    Object.values(menu).forEach(m => {
-      const li = document.createElement("li");
-      li.className = "nav-item";
-      li.innerHTML = `
-        <a href="${m.path}" class="nav-link d-flex align-items-center">
-          <span class="me-2">${m.svg_icon}</span>
-          <span class="menu-name">${m.name}</span>
-        </a>
-      `;
-      sidebarMenu.appendChild(li);
-    });
-  }
+    // 1️⃣ API orqali keladigan elementlar
+    if(menu && Object.keys(menu).length > 0) {
+        Object.values(menu).forEach(m => {
+            const li = document.createElement("li");
+            li.className = "nav-item";
+            li.innerHTML = `
+                <a href="${m.path}" class="nav-link d-flex align-items-center">
+                    <span class="me-2">${m.svg_icon}</span>
+                    <span class="menu-name">${m.name}</span>
+                </a>
+            `;
+            sidebarMenu.appendChild(li);
+        });
+    }
 
-  loadMenu();
-});
+    // 2️⃣ Static tab (har doim qo‘shiladi)
+    const staticTab = document.createElement("li");
+    staticTab.className = "nav-item";
+    staticTab.innerHTML = `
+        <a href="/custom-tab" class="nav-link d-flex align-items-center">
+            <span class="me-2"><i class="bi bi-star"></i></span>
+            <span class="menu-name">Xodimlar</span>
+        </a>
+    `;
+    sidebarMenu.appendChild(staticTab);
+}
+
+
+
+    loadMenu();
+  });
 </script>
 
