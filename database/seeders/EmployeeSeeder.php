@@ -3,17 +3,17 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use App\Models\User; // alohida model kerak
 
-class MenyuEmployeeSeeder extends Seeder
+class EmployeeSeeder extends Seeder
 {
     public function run()
     {
-        // ID sequence 2000 dan boshlanadi
+        // Jadval ID reset
         DB::statement('ALTER SEQUENCE "Menyu_employee_id_seq" RESTART WITH 1');
 
-        // 1 - Helper
+        // Helper (oddiy hodim)
         $helper = User::create([
             'first_name'       => 'Jamshid',
             'last_name'        => 'XOLIQOV',
@@ -34,7 +34,7 @@ class MenyuEmployeeSeeder extends Seeder
         ]);
         $helper->assignRole('helper');
 
-        // 2 - HR   //buyerni ochirib turaman
+        // HR (kadrlar bo‘limi) buyerni ochirib turaman 
         // $hr = User::create([
         //     'first_name'       => 'Dilshod',
         //     'last_name'        => 'QODIROV',
@@ -55,7 +55,7 @@ class MenyuEmployeeSeeder extends Seeder
         // ]);
         // $hr->assignRole('hr');
 
-        // 3 - Manager
+        // Manager
         $manager = User::create([
             'first_name'       => 'Sardor',
             'last_name'        => 'ABDULLAYEV',

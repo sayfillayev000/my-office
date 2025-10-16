@@ -1,5 +1,3 @@
-{{-- sidebar.blade.php --}}
-
 <div class="adminuiux-sidebar">
   <div class="adminuiux-sidebar-inner">
     <div class="px-3 not-iconic mt-2">
@@ -21,15 +19,12 @@
         <p class="small">Office</p>
       </div>
     </div>
-
-    {{-- Menu joyi --}}
-    <ul id="sidebar-menu" class="nav flex-column menu-active-line">
-    
-    </ul>
+    <ul id="sidebar-menu" class="nav flex-column menu-active-line"></ul>
 
     <div class="mt-auto"></div>
   </div>
 </div>
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const sidebarMenu = document.getElementById("sidebar-menu");
@@ -45,62 +40,41 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         credentials: "include"
       });
-
       const data = await response.json();
-      console.log("API javob:", data);
-
-      // ❌ Bu joy noto‘g‘ri edi
-      // if (!data || !data.menu) {
       if (!data || Object.keys(data).length === 0) {
-        sidebarMenu.innerHTML =
-          "<li class='text-danger p-3'>❌ Menu topilmadi</li>";
+        sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Menu topilmadi</li>";
         return;
       }
-
-      // renderMenu(data.menu) emas
       renderMenu(data);
-
     } catch (error) {
       console.error("Menu load error:", error);
-      sidebarMenu.innerHTML =
-        "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
+      sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
     }
   }
 
-function renderMenu(menu) {
-    const sidebarMenu = document.getElementById("sidebar-menu");
+  function renderMenu(menu) {
     sidebarMenu.innerHTML = "";
+    Object.values(menu).forEach(m => {
+      const li = document.createElement("li");
+      li.className = "nav-item";
+      li.innerHTML = `
+        <a href="${m.path}" class="nav-link d-flex align-items-center">
+          <span class="me-2">${m.svg_icon}</span>
+          <span class="menu-name">${m.name}</span>
+        </a>`;
+      sidebarMenu.appendChild(li);
+    });
 
-    // 1️⃣ API orqali keladigan elementlar
-    if(menu && Object.keys(menu).length > 0) {
-        Object.values(menu).forEach(m => {
-            const li = document.createElement("li");
-            li.className = "nav-item";
-            li.innerHTML = `
-                <a href="${m.path}" class="nav-link d-flex align-items-center">
-                    <span class="me-2">${m.svg_icon}</span>
-                    <span class="menu-name">${m.name}</span>
-                </a>
-            `;
-            sidebarMenu.appendChild(li);
-        });
-    }
-
-    // 2️⃣ Static tab (har doim qo‘shiladi)
     const staticTab = document.createElement("li");
     staticTab.className = "nav-item";
     staticTab.innerHTML = `
-        <a href="/custom-tab" class="nav-link d-flex align-items-center">
-            <span class="me-2"><i class="bi bi-star"></i></span>
-            <span class="menu-name">Xodimlar</span>
-        </a>
-    `;
+      <a href="/custom-tab" class="nav-link d-flex align-items-center">
+        <span class="me-2"><i class="bi bi-star"></i></span>
+        <span class="menu-name">Xodimlar</span>
+      </a>`;
     sidebarMenu.appendChild(staticTab);
-}
+  }
 
-
-
-    loadMenu();
-  });
+  loadMenu();
+});
 </script>
-
