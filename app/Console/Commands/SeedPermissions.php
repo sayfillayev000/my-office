@@ -28,7 +28,12 @@ class SeedPermissions extends Command
     public function handle(): void
     {
         $permissions = [
-            'dashboard.view',
+            'dashboard.view', 
+            'custom-tab.view',
+            'employee.view',
+            'employee.create',
+            'employee.edit',
+            'employee.delete',
         ];
 
         foreach ($permissions as $permission) {
