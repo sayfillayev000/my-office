@@ -11,6 +11,8 @@ use App\Http\Controllers\ApplicationController;
 
 
 
+Route::post('/employees/{employee}/update-step/{step}', [EmployeeController::class, 'updateStep'])->name('employees.update-step');
+
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
     Route::get('/sms-verify', [AuthController::class, 'showSmsVerify'])->name('sms.verify');
@@ -49,7 +51,6 @@ Route::group(['middleware' => ['auth']], function() {
 
         return response()->json($response->json());
     });
-
 
 
     Route::get('/applications', [ApplicationController::class, 'index'])->name('applications.index');
