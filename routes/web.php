@@ -11,8 +11,6 @@ use App\Http\Controllers\ApplicationController;
 
 
 
-Route::post('/employees/{employee}/update-step/{step}', [EmployeeController::class, 'updateStep'])->name('employees.update-step');
-
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
     Route::get('/sms-verify', [AuthController::class, 'showSmsVerify'])->name('sms.verify');
@@ -23,14 +21,79 @@ Route::post('/employees/{employee}/update-step/{step}', [EmployeeController::cla
     Route::get('/custom-tab', [CustomTabController::class, 'index'])
     ->middleware('permission:custom-tab.view'); 
 
-    // routes/web.php
-Route::group(['middleware' => ['auth']], function() {
-    Route::resource('employees', EmployeeController::class);
-});
 
-    Route::get('/menu', [MenuController::class, 'index']);
+
+// Employee CRUD
+Route::resource('employees', EmployeeController::class);
+
+// Step-by-step update (multi-step form yoki progress uchun)
+Route::post('/employees/{employee}/update-step/{step}', [EmployeeController::class, 'updateStep'])
+    ->name('employees.update-step');
+
+
+// ======================== EDUCATION ROUTES ========================
+
+// Bitta education ma'lumotini olish (AJAX)
+Route::get('/employees/{employee}/education/{education}', [EmployeeController::class, 'getEducation'])
+    ->name('employees.education.get');
+
+// Education qo‘shish
+Route::post('/employees/{employee}/education', [EmployeeController::class, 'saveEducation'])
+    ->name('employees.education.save');
+
+// Education yangilash
+Route::put('/employees/{employee}/education/{education}', [EmployeeController::class, 'saveEducation'])
+    ->name('employees.education.update');
+
+// Education o‘chirish
+Route::delete('/employees/{employee}/education/{education}', [EmployeeController::class, 'deleteEducation'])
+    ->name('employees.education.delete');
+
+// Educationlar ro‘yxatini jadval ko‘rinishida olish
+Route::get('/employees/{employee}/educations', [EmployeeController::class, 'getEducationsTable'])
+    ->name('employees.educations.table');
+
+
+// ======================== WORK EXPERIENCE ROUTES ========================
+
+// Work experience qo‘shish
+Route::post('/employees/{employee}/work-experience', [EmployeeController::class, 'saveWorkExperience'])
+    ->name('employees.work-experience.save');
+
+// Work experience yangilash
+Route::put('/employees/{employee}/work-experience/{workExperience}', [EmployeeController::class, 'saveWorkExperience'])
+    ->name('employees.work-experience.update');
+
+// Work experience o‘chirish
+Route::delete('/employees/{employee}/work-experience/{workExperience}', [EmployeeController::class, 'deleteWorkExperience'])
+    ->name('employees.work-experience.delete');
+
+// Work experiences ro‘yxatini jadval ko‘rinishida olish
+Route::get('/employees/{employee}/work-experiences', [EmployeeController::class, 'getWorkExperiencesTable'])
+    ->name('employees.work-experiences.table');
+ Route::get('/menu', [MenuController::class, 'index']);
     Route::get('/menuList', [MenuController::class, 'list']);
+// ======================== WORK EXPERIENCE ROUTES ========================
 
+// Work experience ma'lumotini olish (EDIT uchun)
+Route::get('/employees/{employee}/work-experience/{workExperience}', [EmployeeController::class, 'getWorkExperience'])
+    ->name('employees.work-experience.get');
+
+// Work experience qo‘shish
+Route::post('/employees/{employee}/work-experience', [EmployeeController::class, 'saveWorkExperience'])
+    ->name('employees.work-experience.save');
+
+// Work experience yangilash
+Route::put('/employees/{employee}/work-experience/{workExperience}', [EmployeeController::class, 'saveWorkExperience'])
+    ->name('employees.work-experience.update');
+
+// Work experience o‘chirish
+Route::delete('/employees/{employee}/work-experience/{workExperience}', [EmployeeController::class, 'deleteWorkExperience'])
+    ->name('employees.work-experience.delete');
+
+// Work experiences ro‘yxatini jadval ko‘rinishida olish
+Route::get('/employees/{employee}/work-experiences', [EmployeeController::class, 'getWorkExperiencesTable'])
+    ->name('employees.work-experiences.table');
 
 
     Route::post('/proxy/menu', function (\Illuminate\Http\Request $request) {

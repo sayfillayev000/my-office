@@ -231,7 +231,7 @@
                         <!-- Step 1 uchun saqlash tugmasi -->
                         <div class="mt-4 text-end">
                             <button type="button" class="btn btn-success save-step" data-step="1">
-                                <i class="bi bi-check-circle"></i> Saqlash va keyingi qadam
+                                <i class="bi bi-check-circle"></i> Saqlash
                             </button>
                         </div>
                     </form>
@@ -390,7 +390,7 @@
                                 <i class="bi bi-arrow-left"></i> Orqaga
                             </button>
                             <button type="button" class="btn btn-success save-step" data-step="2">
-                                <i class="bi bi-check-circle"></i> Saqlash va keyingi qadam
+                                <i class="bi bi-check-circle"></i> Saqlash
                             </button>
                         </div>
                     </form>
@@ -402,7 +402,7 @@
                         @csrf
                         <div class="row">
                             <!-- Ta'lim ma'lumotlari -->
-                            <div class="col-md-6">
+                            <div class="col-md-12 mb-4">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <p class="h6 py-2 mb-0">Ta'lim ma'lumotlari</p>
                                     <button type="button" class="btn btn-sm btn-success" onclick="openEducationModal()">
@@ -410,279 +410,119 @@
                                     </button>
                                 </div>
                                 
-                                <!-- Ta'lim ma'lumotlari konteyneri -->
-                                <div id="education-container">
-                                    @foreach($employee->educations as $education)
-                                    <div class="education-item border p-3 mb-3 rounded" data-type="{{ $education->degree_type }}">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h6 class="mb-0 text-primary">{{ $education->degree_type }}</h6>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeEducation(this)">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
-                                        
-                                        <input type="hidden" name="educations[{{ $education->id }}][degree_type]" value="{{ $education->degree_type }}">
-                                        
-                                        @if($education->degree_type == 'Tugallanmagan oliy')
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <select name="educations[{{ $education->id }}][university_id]" class="form-control" required>
-                                                        <option value="">Universitetni tanlang</option>
-                                                        @foreach($universities as $university)
-                                                            <option value="{{ $university->id }}" {{ $education->university_id == $university->id ? 'selected' : '' }}>{{ $university->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label>Universitet nomi *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <select name="educations[{{ $education->id }}][faculty_id]" class="form-control" required>
-                                                        <option value="">Fakultetni tanlang</option>
-                                                        @foreach($faculties as $faculty)
-                                                            <option value="{{ $faculty->id }}" {{ $education->faculty_id == $faculty->id ? 'selected' : '' }}>{{ $faculty->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label>Fakultet nomi *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <select name="educations[{{ $education->id }}][speciality_id]" class="form-control" required>
-                                                        <option value="">Mutaxassislikni tanlang</option>
-                                                        @foreach($specialities as $speciality)
-                                                            <option value="{{ $speciality->id }}" {{ $education->speciality_id == $speciality->id ? 'selected' : '' }}>{{ $speciality->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label>Mutaxassislik *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <select name="educations[{{ $education->id }}][course]" class="form-control" required>
-                                                        <option value="1" {{ $education->course == 1 ? 'selected' : '' }}>1-kurs</option>
-                                                        <option value="2" {{ $education->course == 2 ? 'selected' : '' }}>2-kurs</option>
-                                                        <option value="3" {{ $education->course == 3 ? 'selected' : '' }}>3-kurs</option>
-                                                        <option value="4" {{ $education->course == 4 ? 'selected' : '' }}>4-kurs</option>
-                                                    </select>
-                                                    <label>Kurs *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="form-floating mb-3">
-                                                    <input type="date" name="educations[{{ $education->id }}][start_date]" class="form-control" value="{{ $education->start_date }}" required>
-                                                    <label>O'qishga kirgan sanasi *</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @elseif(in_array($education->degree_type, ['Bakalavr', 'Magistr']))
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <select name="educations[{{ $education->id }}][university_id]" class="form-control" required>
-                                                        <option value="">Universitetni tanlang</option>
-                                                        @foreach($universities as $university)
-                                                            <option value="{{ $university->id }}" {{ $education->university_id == $university->id ? 'selected' : '' }}>{{ $university->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label>Universitet nomi *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <select name="educations[{{ $education->id }}][faculty_id]" class="form-control" required>
-                                                        <option value="">Fakultetni tanlang</option>
-                                                        @foreach($faculties as $faculty)
-                                                            <option value="{{ $faculty->id }}" {{ $education->faculty_id == $faculty->id ? 'selected' : '' }}>{{ $faculty->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label>Fakultet nomi *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <select name="educations[{{ $education->id }}][speciality_id]" class="form-control" required>
-                                                        <option value="">Mutaxassislikni tanlang</option>
-                                                        @foreach($specialities as $speciality)
-                                                            <option value="{{ $speciality->id }}" {{ $education->speciality_id == $speciality->id ? 'selected' : '' }}>{{ $speciality->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label>Mutaxassislik *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input type="date" name="educations[{{ $education->id }}][start_date]" class="form-control" value="{{ $education->start_date }}" required>
-                                                    <label>O'qishga kirgan sanasi *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input type="date" name="educations[{{ $education->id }}][end_date]" class="form-control" value="{{ $education->end_date }}" required>
-                                                    <label>O'qishni bitirgan sanasi *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input type="text" name="educations[{{ $education->id }}][diploma_number]" class="form-control" placeholder="Diplom seriya va raqami" value="{{ $education->diploma_number }}" required>
-                                                    <label>Diplom seriya va raqami *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="form-floating mb-3">
-                                                    <input type="date" name="educations[{{ $education->id }}][issue_date]" class="form-control" value="{{ $education->issue_date }}" required>
-                                                    <label>Diplom berilgan sana *</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @elseif($education->degree_type == 'O\'rta maxsus')
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <select name="educations[{{ $education->id }}][college_id]" class="form-control" required>
-                                                        <option value="">Kollej/Litseyni tanlang</option>
-                                                        @foreach($colleges as $college)
-                                                            <option value="{{ $college->id }}" {{ $education->college_id == $college->id ? 'selected' : '' }}>{{ $college->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label>Kollej yoki litsey nomi *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <select name="educations[{{ $education->id }}][faculty_id]" class="form-control" required>
-                                                        <option value="">Fakultetni tanlang</option>
-                                                        @foreach($faculties as $faculty)
-                                                            <option value="{{ $faculty->id }}" {{ $education->faculty_id == $faculty->id ? 'selected' : '' }}>{{ $faculty->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label>Fakultet *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <select name="educations[{{ $education->id }}][speciality_id]" class="form-control" required>
-                                                        <option value="">Mutaxassislikni tanlang</option>
-                                                        @foreach($specialities as $speciality)
-                                                            <option value="{{ $speciality->id }}" {{ $education->speciality_id == $speciality->id ? 'selected' : '' }}>{{ $speciality->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label>Mutaxassislik *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input type="date" name="educations[{{ $education->id }}][start_date]" class="form-control" value="{{ $education->start_date }}" required>
-                                                    <label>Kirgan sana *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input type="date" name="educations[{{ $education->id }}][end_date]" class="form-control" value="{{ $education->end_date }}" required>
-                                                    <label>Tugatgan sana *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input type="text" name="educations[{{ $education->id }}][diploma_number]" class="form-control" placeholder="Diplom seriya va raqami" value="{{ $education->diploma_number }}" required>
-                                                    <label>Diplom seriya va raqami *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="form-floating mb-3">
-                                                    <input type="date" name="educations[{{ $education->id }}][issue_date]" class="form-control" value="{{ $education->issue_date }}" required>
-                                                    <label>Diplom berilgan sana *</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @elseif($education->degree_type == 'O\'rta')
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <select name="educations[{{ $education->id }}][school_id]" class="form-control" required>
-                                                        <option value="">Maktabni tanlang</option>
-                                                        @foreach($schools as $school)
-                                                            <option value="{{ $school->id }}" {{ $education->school_id == $school->id ? 'selected' : '' }}>{{ $school->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label>Maktab nomi *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input type="date" name="educations[{{ $education->id }}][start_date]" class="form-control" value="{{ $education->start_date }}" required>
-                                                    <label>Kirgan sana *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input type="date" name="educations[{{ $education->id }}][end_date]" class="form-control" value="{{ $education->end_date }}" required>
-                                                    <label>Tugatgan sana *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input type="text" name="educations[{{ $education->id }}][certificate_number]" class="form-control" placeholder="Atestat raqami" value="{{ $education->certificate_number }}" required>
-                                                    <label>Atestat raqami *</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="form-floating mb-3">
-                                                    <input type="date" name="educations[{{ $education->id }}][certificate_date]" class="form-control" value="{{ $education->certificate_date }}" required>
-                                                    <label>Atestat berilgan sana *</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @endif
-                                    </div>
-                                    @endforeach
+                                <!-- Ta'lim ma'lumotlari jadvali -->
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" id="educationTable">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Ta'lim darajasi</th>
+                                                <th>O'quv muassasasi</th>
+                                                <th>Mutaxassislik</th>
+                                                <th>Boshlanish sanasi</th>
+                                                <th>Tugash sanasi</th>
+                                                <th>Diplom/Atestat raqami</th>
+                                                <th width="120px">Harakatlar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="educationTableBody">
+                                            @foreach($employee->educations as $education)
+                                            <tr data-id="{{ $education->id }}" data-type="{{ $education->degree_type }}">
+                                                <td>{{ $education->degree_type }}</td>
+                                                <td>
+                                                    @if($education->university) {{ $education->university->name }}
+                                                    @elseif($education->college) {{ $education->college->name }}
+                                                    @elseif($education->school) {{ $education->school->name }}
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($education->speciality) {{ $education->speciality }}
+                                                    @elseif($education->faculty) {{ $education->faculty->name }}
+                                                    @endif
+                                                </td>
+                                                <td>{{ $education->start_date ? \Carbon\Carbon::parse($education->start_date)->format('d.m.Y') : '' }}</td>
+                                                <td>
+                                                    @if($education->degree_type == 'Tugallanmagan oliy')
+                                                    {{ $education->course }}-kurs
+                                                    @else
+                                                    {{ $education->end_date ? \Carbon\Carbon::parse($education->end_date)->format('d.m.Y') : '' }}
+                                                    @endif
+                                                </td>
+                                                <td>{{ $education->diploma_number ?: $education->certificate_number ?: '-' }}</td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <button type="button" class="btn btn-outline-primary" onclick="editEducation({{ $education->id }})" title="Tahrirlash">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-danger" onclick="deleteEducation({{ $education->id }})" title="O'chirish">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
 
                             <!-- Ish tajribasi -->
-                            <div class="col-md-6">
-                                <p class="h6 py-2 mb-3">Ish tajribasi</p>
-                                <div id="work-experience-container">
-                                    @foreach($employee->workExperiences as $index => $work)
-                                    <div class="work-item border p-3 mb-3 rounded">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input type="text" name="work_experiences[{{ $index }}][lavozim]" class="form-control" placeholder="Lavozim" value="{{ $work->lavozim }}">
-                                                    <label>Lavozim</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input type="text" name="work_experiences[{{ $index }}][tashkilot_nomi]" class="form-control" placeholder="Tashkilot nomi" value="{{ $work->tashkilot_nomi }}">
-                                                    <label>Tashkilot nomi</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input type="date" name="work_experiences[{{ $index }}][kirgan_sanasi]" class="form-control" value="{{ $work->kirgan_sanasi }}">
-                                                    <label>Kirgan sanasi</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input type="date" name="work_experiences[{{ $index }}][boshagan_sanasi]" class="form-control" value="{{ $work->boshagan_sanasi }}">
-                                                    <label>Tugatgan sanasi</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-check mb-3">
-                                                    <input type="checkbox" name="work_experiences[{{ $index }}][current_job]" class="form-check-input" value="1" {{ $work->current_job ? 'checked' : '' }}>
-                                                    <label class="form-check-label">Hozirgi ish joyi</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button type="button" class="btn btn-sm btn-danger remove-work" onclick="removeWork(this)">O'chirish</button>
-                                    </div>
-                                    @endforeach
+                            <div class="col-md-12">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <p class="h6 py-2 mb-0">Ish tajribasi</p>
+                                    <button type="button" class="btn btn-sm btn-success" onclick="showWorkExperienceForm()">
+                                        <i class="bi bi-plus-circle"></i> Ish tajribasi qo'shish
+                                    </button>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-success" onclick="addWorkExperience()">+ Ish tajribasi qo'shish</button>
+                                
+                                <!-- Ish tajribasi jadvali -->
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" id="workExperienceTable">
+                                        <thead class="table-light">
+                                               <tr>
+                                                    <th>Tashkilot nomi</th>
+                                                    <th>Lavozim</th>
+                                                    <th>Boshlanish sanasi</th>
+                                                    <th>Tugash sanasi</th>
+                                                    <th>Shartnoma raqami</th>
+                                                    <th>Shartnoma sanasi</th>
+                                                    <th width="120px">Harakatlar</th>
+                                                </tr>
+                                        </thead>
+                                        <tbody id="workExperienceTableBody">
+                                            @foreach($employee->workExperiences as $work)
+                                            <tr data-id="{{ $work->id }}">
+                                                <td>{{ $work->tashkilot_nomi }}</td>
+                                                <td>{{ $work->lavozim }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($work->kirgan_sanasi)->format('d.m.Y') }}</td>
+                                                <td>
+                                                    @if($work->current_job)
+                                                    <span class="badge bg-success">Hozirgi ish</span>
+                                                    @else
+                                                    {{ \Carbon\Carbon::parse($work->boshagan_sanasi)->format('d.m.Y') }}
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($work->current_job)
+                                                    <span class="badge bg-success">Hozirgi ish</span>
+                                                    @else
+                                                    <span class="badge bg-secondary">Tugatilgan</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <button type="button" class="btn btn-outline-primary" onclick="editWorkExperience({{ $work->id }})" title="Tahrirlash">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-danger" onclick="deleteWorkExperience({{ $work->id }})" title="O'chirish">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                         
@@ -692,7 +532,7 @@
                                 <i class="bi bi-arrow-left"></i> Orqaga
                             </button>
                             <button type="button" class="btn btn-success save-step" data-step="3">
-                                <i class="bi bi-check-circle"></i> Saqlash va keyingi qadam
+                                <i class="bi bi-check-circle"></i> Saqlash
                             </button>
                         </div>
                     </form>
@@ -768,7 +608,7 @@
                                 <i class="bi bi-arrow-left"></i> Orqaga
                             </button>
                             <button type="button" class="btn btn-success save-step" data-step="4">
-                                <i class="bi bi-check-circle"></i> Saqlash va keyingi qadam
+                                <i class="bi bi-check-circle"></i> Saqlash
                             </button>
                         </div>
                     </form>
@@ -847,7 +687,7 @@
                             <button type="button" class="btn btn-secondary" onclick="showStep(4)">
                                 <i class="bi bi-arrow-left"></i> Orqaga
                             </button>
-                            <button type="button" class="btn btn-theme save-step" data-step="5">
+                            <button type="button" class="btn btn-primary save-step" data-step="5">
                                 <i class="bi bi-check-circle"></i> Yakuniy saqlash
                             </button>
                         </div>
@@ -907,7 +747,115 @@
     </div>
 </div>
 
+<!-- Ta'lim formasi modal oynasi -->
+<div class="modal fade" id="educationFormModal" tabindex="-1" aria-labelledby="educationFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="educationFormModalLabel">Ta'lim ma'lumotlarini qo'shish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="educationFormModalBody">
+                <!-- Form kontenti JavaScript orqali to'ldiriladi -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ish tajribasi formasi modal oynasi -->
+<!-- Work Experience Modal -->
+<div class="modal fade" id="workExperienceModal" tabindex="-1" aria-labelledby="workExperienceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="workExperienceModalLabel">Ish tajribasini qo'shish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="workExperienceForm">
+                    <input type="hidden" name="work_experience_id" id="workExperienceId">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="tashkilot_nomi" id="workTashkilotNomi" class="form-control" placeholder="Tashkilot nomi" required>
+                                <label for="workTashkilotNomi">Tashkilot nomi *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="lavozim" id="workLavozim" class="form-control" placeholder="Lavozim" required>
+                                <label for="workLavozim">Lavozim *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="date" name="kirgan_sanasi" id="workKirganSanasi" class="form-control" required>
+                                <label for="workKirganSanasi">Kirgan sanasi *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="date" name="boshagan_sanasi" id="workBoshaganSanasi" class="form-control">
+                                <label for="workBoshaganSanasi">Tugatgan sanasi</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="shartnoma_raqami" id="workShartnomaRaqami" class="form-control" placeholder="Shartnoma raqami">
+                                <label for="workShartnomaRaqami">Shartnoma raqami</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="date" name="shartnoma_tuzilgan_sana" id="workShartnomaSana" class="form-control">
+                                <label for="workShartnomaSana">Shartnoma tuzilgan sana</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-check mb-3">
+                                <input type="checkbox" name="current_job" id="workCurrentJob" class="form-check-input" value="1" onchange="toggleWorkEndDate()">
+                                <label class="form-check-label" for="workCurrentJob">Hozirgi ish joyi</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                <button type="button" class="btn btn-success" onclick="saveWorkExperience()">
+                    <i class="bi bi-check-circle"></i> Saqlash
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
+    /* Modal o'lchamlarini bir xil qilish */
+#educationFormModal .modal-dialog,
+#workExperienceModal .modal-dialog {
+    max-width: 800px; /* Bir xil kenglik */
+    width: 95%;
+}
+
+/* Responsive dizayn */
+@media (max-width: 768px) {
+    #educationFormModal .modal-dialog,
+    #workExperienceModal .modal-dialog {
+        max-width: 95%;
+        margin: 1rem auto;
+    }
+}
+
+/* Form elementlari uchun bir xil stil */
+.modal-body .form-floating {
+    margin-bottom: 1rem;
+}
+
+.modal-body .row {
+    margin-bottom: 0.5rem;
+}
 .military-option {
     position: relative;
 }
@@ -971,6 +919,8 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Employee form initialized successfully');
+    
     // Telefon formati
     const phoneInput = document.getElementById("phone");
     if (phoneInput) {
@@ -1080,7 +1030,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Rasmni ko'rsatish
-    function previewImage(input) {
+    window.previewImage = function(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -1090,9 +1040,9 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.readAsDataURL(input.files[0]);
         }
     }
-
-    console.log('Employee form initialized successfully');
 });
+
+// ==================== STEP FUNKSIYALARI ====================
 
 // Step ko'rsatish funksiyasi
 function showStep(stepIndex) {
@@ -1114,15 +1064,23 @@ function showStep(stepIndex) {
 
 // Step saqlash funksiyasi
 function saveStep(step) {
-    // Joriy stepni validatsiya qilish
-    if (!validateStep(step)) {
-        showToast('Iltimos, barcha majburiy maydonlarni to\'ldiring', 'error');
-        return;
-    }
-
+    console.log('Saving step:', step);
+    
     // Form ma'lumotlarini yig'ish
     const form = document.getElementById(`step${step}Form`);
+    if (!form) {
+        console.error(`Step ${step} form not found`);
+        showToast(`Step ${step} form topilmadi`, 'error');
+        return;
+    }
+    
     const formData = new FormData(form);
+
+    // Debug: form ma'lumotlarini ko'rsatish
+    console.log('Form data for step', step);
+    for (let [key, value] of formData.entries()) {
+        console.log(key + ': ' + value);
+    }
 
     // Saqlash indikatorini ko'rsatish
     const saveButton = document.querySelector(`.save-step[data-step="${step}"]`);
@@ -1135,27 +1093,37 @@ function saveStep(step) {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'X-Requested-With': 'XMLHttpRequest'
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
         },
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            return response.text().then(text => {
+                console.log('Response text:', text);
+                throw new Error(`HTTP error! status: ${response.status}, response: ${text}`);
+            });
+        }
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
+        
         if (data.success) {
             showToast(data.message, 'success');
-            // Keyingi stepga o'tish (agar 5-step bo'lmasa)
+            // Keyingi stepga o'tish (agar soxta bo'lsa)
             if (step < 5) {
-                setTimeout(() => {
-                    showStep(step);
-                }, 1000);
-            } else {
-                // Yakuniy saqlash - bosh sahifaga yo'naltirish
-                setTimeout(() => {
-                    window.location.href = '{{ route("employees.index") }}';
-                }, 1500);
+                showStep(step);
             }
         } else {
-            throw new Error(data.message || 'Xatolik yuz berdi');
+            if (data.errors) {
+                let errorMessages = Object.values(data.errors).flat().join(', ');
+                showToast('Validatsiya xatolari: ' + errorMessages, 'error');
+            } else {
+                throw new Error(data.message || 'Xatolik yuz berdi');
+            }
         }
     })
     .catch(error => {
@@ -1169,44 +1137,6 @@ function saveStep(step) {
     });
 }
 
-// Step validatsiyasi
-function validateStep(stepIndex) {
-    const currentPane = document.querySelectorAll('.tab-pane')[stepIndex];
-    const requiredFields = currentPane.querySelectorAll('[required]');
-    
-    let isValid = true;
-    
-    for (let field of requiredFields) {
-        if (!field.value.trim()) {
-            field.focus();
-            field.classList.add('is-invalid');
-            isValid = false;
-        } else {
-            field.classList.remove('is-invalid');
-        }
-    }
-    
-    return isValid;
-}
-
-// Toast xabarlari
-function showToast(message, type = 'info') {
-    // Bootstrap toast yoki oddiy alert
-    const toast = document.createElement('div');
-    toast.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
-    toast.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    document.body.appendChild(toast);
-    
-    // 5 soniyadan so'ng o'chirish
-    setTimeout(() => {
-        toast.remove();
-    }, 5000);
-}
-
 // ==================== TA'LIM FUNKSIYALARI ====================
 
 function openEducationModal() {
@@ -1216,359 +1146,892 @@ function openEducationModal() {
 
 function addEducation(degreeType) {
     const modal = bootstrap.Modal.getInstance(document.getElementById('educationModal'));
-    modal.hide();
+    if (modal) {
+        modal.hide();
+    }
+    
+    showEducationForm(null, degreeType);
+}
 
-    const newId = 'new_' + Date.now();
-    let educationHTML = '';
-
+function showEducationForm(educationId = null, degreeType = null) {
+    console.log('showEducationForm called with:', { educationId, degreeType });
+    
+    if (educationId) {
+        // Tahrirlash rejimi
+        loadEducationData(educationId);
+    } else {
+        // Qo'shish rejimi
+        loadEducationForm(degreeType);
+    }
+}
+function loadEducationForm(degreeType) {
+    console.log('Loading education form for:', degreeType);
+    
+    let formHTML = `<form id="educationForm">
+        <!-- degree_type hidden input qo'shish -->
+        <input type="hidden" name="degree_type" value="${degreeType}">
+        <input type="hidden" name="education_id" id="educationId">`;
+    
     switch(degreeType) {
         case 'Tugallanmagan oliy':
-            educationHTML = getUnfinishedHigherHTML(newId, degreeType);
+            formHTML += getUnfinishedHigherForm();
             break;
         case 'Bakalavr':
         case 'Magistr':
-            educationHTML = getHigherEducationHTML(newId, degreeType);
+            formHTML += getHigherEducationForm(degreeType);
             break;
         case 'O\'rta maxsus':
-            educationHTML = getSecondarySpecialHTML(newId, degreeType);
+            formHTML += getSecondarySpecialForm();
             break;
         case 'O\'rta':
-            educationHTML = getSecondaryHTML(newId, degreeType);
+            formHTML += getSecondaryForm();
             break;
     }
+    
+    formHTML += `
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="button" class="btn btn-success" onclick="saveEducation()">
+                        <i class="bi bi-check-circle"></i> Saqlash
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>`;
+    
+    document.getElementById('educationFormModalBody').innerHTML = formHTML;
+    document.getElementById('educationFormModalLabel').textContent = "Ta'lim ma'lumotlarini qo'shish";
+    
+    const modal = new bootstrap.Modal(document.getElementById('educationFormModal'));
+    modal.show();
+}
+function loadEducationData(educationId) {
+    console.log('Loading education data for ID:', educationId);
+    
+    fetch(`/employees/{{ $employee->id }}/education/${educationId}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Education data loaded:', data);
+        if (data.success) {
+            const education = data.education;
+            
+            // Modal sarlavhasini o'zgartirish
+            document.getElementById('educationFormModalLabel').textContent = "Ta'lim ma'lumotlarini tahrirlash";
+            
+            // Formani yuklash
+            loadEducationForm(education.degree_type);
+            
+            // Formani ma'lumotlar bilan to'ldirish
+            setTimeout(() => {
+                const form = document.getElementById('educationForm');
+                if (form) {
+                    // ID ni to'g'ri o'rnatish
+                    document.getElementById('educationId').value = education.id;
+                    
+                    // degree_type ni to'g'ri o'rnatish
+                    const degreeTypeInput = form.querySelector('input[name="degree_type"]');
+                    if (degreeTypeInput) {
+                        degreeTypeInput.value = education.degree_type;
+                    }
+                    
+                    // Barcha maydonlarni to'ldirish
+                    Object.keys(education).forEach(key => {
+                        const input = form.querySelector(`[name="${key}"]`);
+                        if (input && education[key] !== null) {
+                            // Sanalarni to'g'ri formatda ko'rsatish
+                            if (key.includes('_date') && education[key]) {
+                                const date = new Date(education[key]);
+                                input.value = date.toISOString().split('T')[0];
+                            } else {
+                                input.value = education[key];
+                            }
+                        }
+                    });
+                    
+                    // Selectlarni to'ldirish
+                    const selects = form.querySelectorAll('select');
+                    selects.forEach(select => {
+                        const value = education[select.name];
+                        if (value !== null && value !== undefined) {
+                            select.value = value;
+                        }
+                    });
+                    
+                    console.log('Form filled with data');
+                }
+            }, 100);
+        } else {
+            throw new Error(data.message || 'Ma\'lumotlarni yuklashda xatolik');
+        }
+    })
+    .catch(error => {
+        console.error('Xatolik:', error);
+        showToast('Ma\'lumotlarni yuklashda xatolik: ' + error.message, 'error');
+    });
+}
+// ==================== TA'LIM FUNKSIYALARI ====================
 
-    const container = document.getElementById('education-container');
-    if (container) {
-        container.insertAdjacentHTML('beforeend', educationHTML);
+function saveEducation() {
+    console.log('saveEducation function called');
+    
+    const form = document.getElementById('educationForm');
+    console.log('Education form:', form);
+    
+    if (!form) {
+        console.error('Education form not found!');
+        showToast('Ta\'lim formasi topilmadi.', 'error');
+        return;
+    }
+    
+    // FormData o'rniga oddiy object yaratish
+    const formData = new FormData(form);
+    const data = {};
+    
+    // FormData ni object ga aylantirish
+    for (let [key, value] of formData.entries()) {
+        data[key] = value;
+    }
+    
+    // Debug: form ma'lumotlarini ko'rsatish
+    console.log('Form data for education:', data);
+    
+    // Majburiy maydonlarni tekshirish
+    const degreeType = data.degree_type;
+    const startDate = data.start_date;
+    
+    console.log('Degree type:', degreeType);
+    console.log('Start date:', startDate);
+    
+    if (!degreeType || !startDate) {
+        showToast('Iltimos, barcha majburiy maydonlarni to\'ldiring', 'error');
+        return;
+    }
+    
+    const educationId = document.getElementById('educationId')?.value || '';
+    const url = educationId 
+        ? `/employees/{{ $employee->id }}/education/${educationId}`
+        : `/employees/{{ $employee->id }}/education`;
+        
+    const method = educationId ? 'PUT' : 'POST';
+    
+    console.log('Sending request to:', url, 'Method:', method);
+    
+    const saveButton = document.querySelector('#educationFormModal .btn-success');
+    if (!saveButton) {
+        console.error('Save button not found');
+        showToast('Saqlash tugmasi topilmadi', 'error');
+        return;
+    }
+    
+    const originalText = saveButton.innerHTML;
+    saveButton.innerHTML = '<i class="bi bi-hourglass-split"></i> Saqlanmoqda...';
+    saveButton.disabled = true;
+    
+    // FormData o'rniga JSON yuborish
+    fetch(url, {
+        method: method,
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            return response.text().then(text => {
+                console.log('Response text:', text);
+                throw new Error(`HTTP error! status: ${response.status}, response: ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('educationFormModal'));
+            if (modal) modal.hide();
+            refreshEducationTable();
+        } else {
+            if (data.errors) {
+                let errorMessages = Object.values(data.errors).flat().join(', ');
+                showToast('Validatsiya xatolari: ' + errorMessages, 'error');
+            } else {
+                showToast(data.message || 'Saqlashda xatolik', 'error');
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Xatolik:', error);
+        showToast('Saqlashda xatolik yuz berdi: ' + error.message, 'error');
+    })
+    .finally(() => {
+        saveButton.innerHTML = originalText;
+        saveButton.disabled = false;
+    });
+}
+function loadEducationData(educationId) {
+    console.log('Loading education data for ID:', educationId);
+    
+    fetch(`/employees/{{ $employee->id }}/education/${educationId}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Education data loaded:', data);
+        if (data.success) {
+            const education = data.education;
+            
+            // Modal sarlavhasini o'zgartirish
+            document.getElementById('educationFormModalLabel').textContent = "Ta'lim ma'lumotlarini tahrirlash";
+            
+            // Formani yuklash
+            loadEducationForm(education.degree_type);
+            
+            // Formani ma'lumotlar bilan to'ldirish
+            setTimeout(() => {
+                const form = document.getElementById('educationForm');
+                if (form) {
+                    document.getElementById('educationId').value = education.id;
+                    
+                    // Barcha maydonlarni to'ldirish
+                    Object.keys(education).forEach(key => {
+                        const input = form.querySelector(`[name="${key}"]`);
+                        if (input && education[key] !== null) {
+                            // Sanalarni to'g'ri formatda ko'rsatish
+                            if (key.includes('_date') && education[key]) {
+                                const date = new Date(education[key]);
+                                input.value = date.toISOString().split('T')[0];
+                            } else {
+                                input.value = education[key];
+                            }
+                        }
+                    });
+                    
+                    // Selectlarni to'ldirish
+                    const selects = form.querySelectorAll('select');
+                    selects.forEach(select => {
+                        const value = education[select.name];
+                        if (value !== null && value !== undefined) {
+                            select.value = value;
+                        }
+                    });
+                }
+            }, 100);
+        } else {
+            throw new Error(data.message || 'Ma\'lumotlarni yuklashda xatolik');
+        }
+    })
+    .catch(error => {
+        console.error('Xatolik:', error);
+        showToast('Ma\'lumotlarni yuklashda xatolik: ' + error.message, 'error');
+    });
+}
+function editEducation(educationId) {
+    showEducationForm(educationId);
+}
+
+function deleteEducation(educationId) {
+    if (confirm('Haqiqatan ham ushbu ta\'lim ma\'lumotini o\'chirmoqchimisiz?')) {
+        fetch(`/employees/{{ $employee->id }}/education/${educationId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                showToast(data.message, 'success');
+                refreshEducationTable();
+            } else {
+                showToast(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Xatolik:', error);
+            showToast('O\'chirishda xatolik yuz berdi', 'error');
+        });
     }
 }
 
-function getUnfinishedHigherHTML(id, degreeType) {
-    return `
-        <div class="education-item border p-3 mb-3 rounded" data-type="${degreeType}">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="mb-0 text-primary">${degreeType}</h6>
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeEducation(this)">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </div>
-            <input type="hidden" name="educations[${id}][degree_type]" value="${degreeType}">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <select name="educations[${id}][university_id]" class="form-control" required>
-                            <option value="">Universitetni tanlang</option>
-                            @foreach($universities as $university)
-                                <option value="{{ $university->id }}">{{ $university->name }}</option>
-                            @endforeach
-                        </select>
-                        <label>Universitet nomi *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <select name="educations[${id}][faculty_id]" class="form-control" required>
-                            <option value="">Fakultetni tanlang</option>
-                            @foreach($faculties as $faculty)
-                                <option value="{{ $faculty->id }}">{{ $faculty->name }}</option>
-                            @endforeach
-                        </select>
-                        <label>Fakultet nomi *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <select name="educations[${id}][speciality_id]" class="form-control" required>
-                            <option value="">Mutaxassislikni tanlang</option>
-                            @foreach($specialities as $speciality)
-                                <option value="{{ $speciality->id }}">{{ $speciality->name }}</option>
-                            @endforeach
-                        </select>
-                        <label>Mutaxassislik *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <select name="educations[${id}][course]" class="form-control" required>
-                            <option value="1">1-kurs</option>
-                            <option value="2">2-kurs</option>
-                            <option value="3">3-kurs</option>
-                            <option value="4">4-kurs</option>
-                        </select>
-                        <label>Kurs *</label>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="form-floating mb-3">
-                        <input type="date" name="educations[${id}][start_date]" class="form-control" required>
-                        <label>O'qishga kirgan sanasi *</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function getHigherEducationHTML(id, degreeType) {
-    return `
-        <div class="education-item border p-3 mb-3 rounded" data-type="${degreeType}">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="mb-0 text-primary">${degreeType}</h6>
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeEducation(this)">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </div>
-            <input type="hidden" name="educations[${id}][degree_type]" value="${degreeType}">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <select name="educations[${id}][university_id]" class="form-control" required>
-                            <option value="">Universitetni tanlang</option>
-                            @foreach($universities as $university)
-                                <option value="{{ $university->id }}">{{ $university->name }}</option>
-                            @endforeach
-                        </select>
-                        <label>Universitet nomi *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <select name="educations[${id}][faculty_id]" class="form-control" required>
-                            <option value="">Fakultetni tanlang</option>
-                            @foreach($faculties as $faculty)
-                                <option value="{{ $faculty->id }}">{{ $faculty->name }}</option>
-                            @endforeach
-                        </select>
-                        <label>Fakultet nomi *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <select name="educations[${id}][speciality_id]" class="form-control" required>
-                            <option value="">Mutaxassislikni tanlang</option>
-                            @foreach($specialities as $speciality)
-                                <option value="{{ $speciality->id }}">{{ $speciality->name }}</option>
-                            @endforeach
-                        </select>
-                        <label>Mutaxassislik *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <input type="date" name="educations[${id}][start_date]" class="form-control" required>
-                        <label>O'qishga kirgan sanasi *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <input type="date" name="educations[${id}][end_date]" class="form-control" required>
-                        <label>O'qishni bitirgan sanasi *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <input type="text" name="educations[${id}][diploma_number]" class="form-control" placeholder="Diplom seriya va raqami" required>
-                        <label>Diplom seriya va raqami *</label>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="form-floating mb-3">
-                        <input type="date" name="educations[${id}][issue_date]" class="form-control" required>
-                        <label>Diplom berilgan sana *</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function getSecondarySpecialHTML(id, degreeType) {
-    return `
-        <div class="education-item border p-3 mb-3 rounded" data-type="${degreeType}">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="mb-0 text-primary">${degreeType}</h6>
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeEducation(this)">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </div>
-            <input type="hidden" name="educations[${id}][degree_type]" value="${degreeType}">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <select name="educations[${id}][college_id]" class="form-control" required>
-                            <option value="">Kollej/Litseyni tanlang</option>
-                            @foreach($colleges as $college)
-                                <option value="{{ $college->id }}">{{ $college->name }}</option>
-                            @endforeach
-                        </select>
-                        <label>Kollej yoki litsey nomi *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <select name="educations[${id}][faculty_id]" class="form-control" required>
-                            <option value="">Fakultetni tanlang</option>
-                            @foreach($faculties as $faculty)
-                                <option value="{{ $faculty->id }}">{{ $faculty->name }}</option>
-                            @endforeach
-                        </select>
-                        <label>Fakultet *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <select name="educations[${id}][speciality_id]" class="form-control" required>
-                            <option value="">Mutaxassislikni tanlang</option>
-                            @foreach($specialities as $speciality)
-                                <option value="{{ $speciality->id }}">{{ $speciality->name }}</option>
-                            @endforeach
-                        </select>
-                        <label>Mutaxassislik *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <input type="date" name="educations[${id}][start_date]" class="form-control" required>
-                        <label>Kirgan sana *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <input type="date" name="educations[${id}][end_date]" class="form-control" required>
-                        <label>Tugatgan sana *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <input type="text" name="educations[${id}][diploma_number]" class="form-control" placeholder="Diplom seriya va raqami" required>
-                        <label>Diplom seriya va raqami *</label>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="form-floating mb-3">
-                        <input type="date" name="educations[${id}][issue_date]" class="form-control" required>
-                        <label>Diplom berilgan sana *</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function getSecondaryHTML(id, degreeType) {
-    return `
-        <div class="education-item border p-3 mb-3 rounded" data-type="${degreeType}">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="mb-0 text-primary">${degreeType}</h6>
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeEducation(this)">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </div>
-            <input type="hidden" name="educations[${id}][degree_type]" value="${degreeType}">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <select name="educations[${id}][school_id]" class="form-control" required>
-                            <option value="">Maktabni tanlang</option>
-                            @foreach($schools as $school)
-                                <option value="{{ $school->id }}">{{ $school->name }}</option>
-                            @endforeach
-                        </select>
-                        <label>Maktab nomi *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <input type="date" name="educations[${id}][start_date]" class="form-control" required>
-                        <label>Kirgan sana *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <input type="date" name="educations[${id}][end_date]" class="form-control" required>
-                        <label>Tugatgan sana *</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        <input type="text" name="educations[${id}][certificate_number]" class="form-control" placeholder="Atestat raqami" required>
-                        <label>Atestat raqami *</label>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="form-floating mb-3">
-                        <input type="date" name="educations[${id}][certificate_date]" class="form-control" required>
-                        <label>Atestat berilgan sana *</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function removeEducation(button) {
-    const educationItem = button.closest('.education-item');
-    if (educationItem) {
-        educationItem.remove();
-    }
+function refreshEducationTable() {
+    fetch(`/employees/{{ $employee->id }}/educations`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(html => {
+        document.getElementById('educationTableBody').innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Xatolik:', error);
+        showToast('Jadvalni yangilashda xatolik', 'error');
+    });
 }
 
 // ==================== ISH TAJRIBASI FUNKSIYALARI ====================
 
-function addWorkExperience() {
-    const container = document.getElementById('work-experience-container');
-    if (!container) return;
+function showWorkExperienceForm(workId = null) {
+    console.log('showWorkExperienceForm called with:', workId);
     
-    const workItems = container.querySelectorAll('.work-item');
-    const workCount = workItems.length;
+    const modal = new bootstrap.Modal(document.getElementById('workExperienceModal'));
     
-    const newItem = document.createElement('div');
-    newItem.className = 'work-item border p-3 mb-3 rounded';
-    newItem.innerHTML = `
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-floating mb-3">
-                    <input type="text" name="work_experiences[${workCount}][lavozim]" class="form-control" placeholder="Lavozim">
-                    <label>Lavozim</label>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-floating mb-3">
-                    <input type="text" name="work_experiences[${workCount}][tashkilot_nomi]" class="form-control" placeholder="Tashkilot nomi">
-                    <label>Tashkilot nomi</label>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-floating mb-3">
-                    <input type="date" name="work_experiences[${workCount}][kirgan_sanasi]" class="form-control">
-                    <label>Kirgan sanasi</label>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-floating mb-3">
-                    <input type="date" name="work_experiences[${workCount}][boshagan_sanasi]" class="form-control">
-                    <label>Tugatgan sanasi</label>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="form-check mb-3">
-                    <input type="checkbox" name="work_experiences[${workCount}][current_job]" class="form-check-input" value="1">
-                    <label class="form-check-label">Hozirgi ish joyi</label>
-                </div>
-            </div>
-        </div>
-        <button type="button" class="btn btn-sm btn-danger remove-work" onclick="removeWork(this)">O'chirish</button>
-    `;
-    container.appendChild(newItem);
+    if (workId) {
+        // Tahrirlash rejimi
+        document.getElementById('workExperienceModalLabel').textContent = "Ish tajribasini tahrirlash";
+        
+        // Ma'lumotlarni serverdan olish va forma bilan to'ldirish
+        fetch(`/employees/{{ $employee->id }}/work-experience/${workId}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                const work = data.workExperience;
+                
+                // Formani ma'lumotlar bilan to'ldirish
+                document.getElementById('workExperienceId').value = work.id;
+                document.getElementById('workTashkilotNomi').value = work.tashkilot_nomi;
+                document.getElementById('workLavozim').value = work.lavozim;
+                document.getElementById('workKirganSanasi').value = work.kirgan_sanasi ? new Date(work.kirgan_sanasi).toISOString().split('T')[0] : '';
+                document.getElementById('workBoshaganSanasi').value = work.boshagan_sanasi ? new Date(work.boshagan_sanasi).toISOString().split('T')[0] : '';
+                document.getElementById('workShartnomaRaqami').value = work.shartnoma_raqami || '';
+                document.getElementById('workShartnomaSana').value = work.shartnoma_tuzilgan_sana ? new Date(work.shartnoma_tuzilgan_sana).toISOString().split('T')[0] : '';
+                document.getElementById('workCurrentJob').checked = work.current_job;
+                
+                toggleWorkEndDate();
+            } else {
+                throw new Error(data.message || 'Ma\'lumotlarni yuklashda xatolik');
+            }
+        })
+        .catch(error => {
+            console.error('Xatolik:', error);
+            showToast('Ma\'lumotlarni yuklashda xatolik: ' + error.message, 'error');
+        });
+    } else {
+        // Qo'shish rejimi
+        document.getElementById('workExperienceModalLabel').textContent = "Ish tajribasini qo'shish";
+        resetWorkExperienceForm();
+    }
+    
+    modal.show();
 }
 
-function removeWork(button) {
-    const workItem = button.closest('.work-item');
-    if (workItem) {
-        workItem.remove();
+function resetWorkExperienceForm() {
+    document.getElementById('workExperienceId').value = '';
+    document.getElementById('workExperienceForm').reset();
+    document.getElementById('workCurrentJob').checked = false;
+    toggleWorkEndDate();
+}
+function loadWorkExperienceData(workId) {
+    console.log('Loading work experience data for ID:', workId);
+    
+    fetch(`/employees/{{ $employee->id }}/work-experience/${workId}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Work experience data loaded:', data);
+        if (data.success) {
+            const work = data.workExperience;
+            
+            document.getElementById('workExperienceId').value = work.id;
+            document.getElementById('workTashkilotNomi').value = work.tashkilot_nomi;
+            document.getElementById('workLavozim').value = work.lavozim;
+            document.getElementById('workKirganSanasi').value = work.kirgan_sanasi;
+            document.getElementById('workBoshaganSanasi').value = work.boshagan_sanasi;
+            document.getElementById('workCurrentJob').checked = work.current_job;
+            
+            toggleWorkEndDate();
+        }
+    })
+    .catch(error => {
+        console.error('Xatolik:', error);
+        showToast('Ma\'lumotlarni yuklashda xatolik: ' + error.message, 'error');
+    });
+}
+
+function resetWorkExperienceForm() {
+    document.getElementById('workExperienceId').value = '';
+    document.getElementById('workExperienceForm').reset();
+    document.getElementById('workCurrentJob').checked = false;
+    toggleWorkEndDate();
+}
+function toggleWorkEndDate() {
+    const currentJobCheckbox = document.getElementById('workCurrentJob');
+    const endDateInput = document.getElementById('workBoshaganSanasi');
+    
+    if (!currentJobCheckbox || !endDateInput) {
+        console.error('Work experience form elements not found');
+        return;
+    }
+    
+    if (currentJobCheckbox.checked) {
+        endDateInput.disabled = true;
+        endDateInput.value = '';
+        endDateInput.removeAttribute('required');
+    } else {
+        endDateInput.disabled = false;
+        endDateInput.setAttribute('required', 'required');
     }
 }
 
+// ==================== ISH TAJRIBASI FUNKSIYALARI ====================
+function saveWorkExperience() {
+    console.log('saveWorkExperience function called');
+    
+    const form = document.getElementById('workExperienceForm');
+    if (!form) {
+        showToast('Ish tajribasi formasi topilmadi.', 'error');
+        return;
+    }
+    
+    // Form ma'lumotlarini object ga aylantirish
+    const formData = {
+        tashkilot_nomi: document.getElementById('workTashkilotNomi').value,
+        lavozim: document.getElementById('workLavozim').value,
+        kirgan_sanasi: document.getElementById('workKirganSanasi').value,
+        boshagan_sanasi: document.getElementById('workBoshaganSanasi').value,
+        shartnoma_raqami: document.getElementById('workShartnomaRaqami').value,
+        shartnoma_tuzilgan_sana: document.getElementById('workShartnomaSana').value,
+        current_job: document.getElementById('workCurrentJob').checked ? 1 : 0
+    };
+    
+    const workId = document.getElementById('workExperienceId')?.value || '';
+    
+    // URL va methodni aniqlash
+    let url, method;
+    
+    if (workId) {
+        url = `/employees/{{ $employee->id }}/work-experience/${workId}`;
+        method = 'PUT';
+        formData.work_experience_id = workId;
+    } else {
+        url = `/employees/{{ $employee->id }}/work-experience`;
+        method = 'POST';
+    }
+    
+    console.log('Sending request to:', url, 'Method:', method);
+    console.log('Data:', formData);
+    
+    const saveButton = document.querySelector('#workExperienceModal .btn-success');
+    if (!saveButton) {
+        showToast('Saqlash tugmasi topilmadi', 'error');
+        return;
+    }
+    
+    const originalText = saveButton.innerHTML;
+    saveButton.innerHTML = '<i class="bi bi-hourglass-split"></i> Saqlanmoqda...';
+    saveButton.disabled = true;
+    
+    fetch(url, {
+        method: method,
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            return response.text().then(text => {
+                console.log('Response text:', text);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('workExperienceModal'));
+            if (modal) modal.hide();
+            refreshWorkExperienceTable();
+        } else {
+            if (data.errors) {
+                let errorMessages = Object.values(data.errors).flat().join(', ');
+                showToast('Validatsiya xatolari: ' + errorMessages, 'error');
+            } else {
+                showToast(data.message || 'Saqlashda xatolik', 'error');
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Xatolik:', error);
+        showToast('Saqlashda xatolik yuz berdi: ' + error.message, 'error');
+    })
+    .finally(() => {
+        saveButton.innerHTML = originalText;
+        saveButton.disabled = false;
+    });
+}
+function editWorkExperience(workId) {
+    console.log('Editing work experience with ID:', workId);
+    
+    // GET so'rovini to'g'ri URL ga yuborish
+    fetch(`/employees/{{ $employee->id }}/work-experience/${workId}`, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Work experience data loaded:', data);
+        if (data.success) {
+            showWorkExperienceForm(workId); // Ma'lumotlarni forma bilan to'ldirish
+        } else {
+            throw new Error(data.message || 'Ma\'lumotlarni yuklashda xatolik');
+        }
+    })
+    .catch(error => {
+        console.error('Xatolik:', error);
+        showToast('Ma\'lumotlarni yuklashda xatolik: ' + error.message, 'error');
+    });
+}
+function deleteWorkExperience(workId) {
+    if (confirm('Haqiqatan ham ushbu ish tajribasini o\'chirmoqchimisiz?')) {
+        fetch(`/employees/{{ $employee->id }}/work-experience/${workId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                showToast(data.message, 'success');
+                refreshWorkExperienceTable();
+            } else {
+                showToast(data.message, 'error');
+            }
+        })
+    .catch(error => {
+        console.error('Xatolik:', error);
+        showToast('O\'chirishda xatolik yuz berdi', 'error');
+    });
+    }
+}
+
+function refreshWorkExperienceTable() {
+    fetch(`/employees/{{ $employee->id }}/work-experiences`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(html => {
+        document.getElementById('workExperienceTableBody').innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Xatolik:', error);
+        showToast('Jadvalni yangilashda xatolik', 'error');
+    });
+}
+
+// ==================== FORM GENERATOR FUNKSIYALARI ====================
+function getUnfinishedHigherForm() {
+    return `
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <select name="university_id" class="form-control" required>
+                        <option value="">Universitetni tanlang</option>
+                        @foreach($universities as $university)
+                            <option value="{{ $university->id }}">{{ $university->name }}</option>
+                        @endforeach
+                    </select>
+                    <label>Universitet nomi *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <select name="faculty_id" class="form-control" required>
+                        <option value="">Fakultetni tanlang</option>
+                        @foreach($faculties as $faculty)
+                            <option value="{{ $faculty->id }}">{{ $faculty->name }}</option>
+                        @endforeach
+                    </select>
+                    <label>Fakultet nomi *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <select name="speciality_id" class="form-control" required>
+                        <option value="">Mutaxassislikni tanlang</option>
+                        @foreach($specialities as $speciality)
+                            <option value="{{ $speciality->id }}">{{ $speciality->name }}</option>
+                        @endforeach
+                    </select>
+                    <label>Mutaxassislik *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <select name="course" class="form-control" required>
+                        <option value="1">1-kurs</option>
+                        <option value="2">2-kurs</option>
+                        <option value="3">3-kurs</option>
+                        <option value="4">4-kurs</option>
+                    </select>
+                    <label>Kurs *</label>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-floating mb-3">
+                    <input type="date" name="start_date" class="form-control" required>
+                    <label>O'qishga kirgan sanasi *</label>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function getHigherEducationForm(degreeType) {
+    return `
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <select name="university_id" class="form-control" required>
+                        <option value="">Universitetni tanlang</option>
+                        @foreach($universities as $university)
+                            <option value="{{ $university->id }}">{{ $university->name }}</option>
+                        @endforeach
+                    </select>
+                    <label>Universitet nomi *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <select name="faculty_id" class="form-control" required>
+                        <option value="">Fakultetni tanlang</option>
+                        @foreach($faculties as $faculty)
+                            <option value="{{ $faculty->id }}">{{ $faculty->name }}</option>
+                        @endforeach
+                    </select>
+                    <label>Fakultet nomi *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <select name="speciality_id" class="form-control" required>
+                        <option value="">Mutaxassislikni tanlang</option>
+                        @foreach($specialities as $speciality)
+                            <option value="{{ $speciality->id }}">{{ $speciality->name }}</option>
+                        @endforeach
+                    </select>
+                    <label>Mutaxassislik *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <input type="date" name="start_date" class="form-control" required>
+                    <label>O'qishga kirgan sanasi *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <input type="date" name="end_date" class="form-control" required>
+                    <label>O'qishni bitirgan sanasi *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <input type="text" name="diploma_number" class="form-control" placeholder="Diplom seriya va raqami" required>
+                    <label>Diplom seriya va raqami *</label>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-floating mb-3">
+                    <input type="date" name="issue_date" class="form-control" required>
+                    <label>Diplom berilgan sana *</label>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function getSecondarySpecialForm() {
+    return `
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <select name="college_id" class="form-control" required>
+                        <option value="">Kollej/Litseyni tanlang</option>
+                        @foreach($colleges as $college)
+                            <option value="{{ $college->id }}">{{ $college->name }}</option>
+                        @endforeach
+                    </select>
+                    <label>Kollej yoki litsey nomi *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <select name="faculty_id" class="form-control" required>
+                        <option value="">Fakultetni tanlang</option>
+                        @foreach($faculties as $faculty)
+                            <option value="{{ $faculty->id }}">{{ $faculty->name }}</option>
+                        @endforeach
+                    </select>
+                    <label>Fakultet *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <select name="speciality_id" class="form-control" required>
+                        <option value="">Mutaxassislikni tanlang</option>
+                        @foreach($specialities as $speciality)
+                            <option value="{{ $speciality->id }}">{{ $speciality->name }}</option>
+                        @endforeach
+                    </select>
+                    <label>Mutaxassislik *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <input type="date" name="start_date" class="form-control" required>
+                    <label>Kirgan sana *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <input type="date" name="end_date" class="form-control" required>
+                    <label>Tugatgan sana *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <input type="text" name="diploma_number" class="form-control" placeholder="Diplom seriya va raqami" required>
+                    <label>Diplom seriya va raqami *</label>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-floating mb-3">
+                    <input type="date" name="issue_date" class="form-control" required>
+                    <label>Diplom berilgan sana *</label>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function getSecondaryForm() {
+    return `
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <select name="school_id" class="form-control" required>
+                        <option value="">Maktabni tanlang</option>
+                        @foreach($schools as $school)
+                            <option value="{{ $school->id }}">{{ $school->name }}</option>
+                        @endforeach
+                    </select>
+                    <label>Maktab nomi *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <input type="date" name="start_date" class="form-control" required>
+                    <label>Kirgan sana *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <input type="date" name="end_date" class="form-control" required>
+                    <label>Tugatgan sana *</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <input type="text" name="certificate_number" class="form-control" placeholder="Atestat raqami">
+                    <label>Atestat raqami</label>
+                </div>
+            </div>
+        </div>
+    `;
+}
 // ==================== QARINDOSHLAR FUNKSIYALARI ====================
 
 function addRelative() {
@@ -1641,6 +2104,29 @@ function removeRelative(button) {
     if (relativeItem) {
         relativeItem.remove();
     }
+}
+
+// ==================== YORDAMCHI FUNKSIYALAR ====================
+
+// Toast xabarlari
+function showToast(message, type = 'info') {
+    // Bootstrap toast yoki oddiy alert
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // 5 soniyadan so'ng o'chirish
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 5000);
 }
 </script>
 @endsection

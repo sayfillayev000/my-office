@@ -1,365 +1,509 @@
 @extends('layouts.app')
 
-@section('content')    <div class="container mt-3">
-                            <div class="card adminuiux-card mb-3">
-                                <div class="card-header">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col">
-                                            <p class="h6">Standard Modal</p>
-                                        </div>
-                                        <div class="col-auto">
-                                            <button type="button" class="btn btn-outline-theme btn-square" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false">
-                                                <i class="bi bi-code-slash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+@section('content')
+<div class="card adminuiux-card mb-3">
+                             
                                 <div class="card-body">
-                                    <button type="button" class="btn btn-theme" data-bs-toggle="modal" data-bs-target="#standardmodal">
-                                        Standard modal
-                                    </button>
-                                </div>
-                                <div class="collapse" id="collapse1">
-                                    <div class="card-footer border-top">
-                                        <div class="bg-dark text-white p-2 rounded my-2">
-                                            <pre class="mb-2"><code class="code rounded language-html">
-&lt;button type="button" class="btn btn-theme" data-bs-toggle="modal" data-bs-target="#standardmodal"&gt;
-    Standard modal
-&lt;/button&gt;
-
-&lt;!-- Standard Modal --&gt;
-&lt;div class="modal fade" id="standardmodal" tabindex="-1" aria-labelledby="standardmodalLabel" aria-hidden="true"&gt;
-    &lt;div class="modal-dialog"&gt;
-        &lt;div class="modal-content"&gt;
-            &lt;div class="modal-header"&gt;
-                &lt;p class="modal-title h5" id="standardmodalLabel"&gt;Modal title&lt;/p&gt;
-                &lt;button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"&gt;&lt;/button&gt;
-            &lt;/div&gt;
-            &lt;div class="modal-body"&gt;
-                ...
-            &lt;/div&gt;
-            &lt;div class="modal-footer"&gt;
-                &lt;button type="button" class="btn btn-secondary" data-bs-dismiss="modal"&gt;Close&lt;/button&gt;
-                &lt;button type="button" class="btn btn-theme"&gt;Save changes&lt;/button&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-                    </code></pre>
-                                            <button type="button" class="btn btn-outline-light  btn-square copycode"><i class="bi bi-clipboard"></i></button>
-                                        </div>
+                                  
+                                    <!-- data table -->
+                                    <div class="mb-3">
+                                        <table id="dataTable" class="table w-100 nowrap">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th data-breakpoints="xs sm">Patient</th>
+                                                    <th data-breakpoints="xs sm md">Contact info</th>
+                                                    <th data-breakpoints="xs sm">Tags</th>
+                                                    <th class="all">Recent Schedule</th>
+                                                    <th data-breakpoints="xs sm">Status</th>
+                                                    <th class="all">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>2054ID</td>
+                                                    <td>
+                                                        <div class="row align-items-center flex-nowrap">
+                                                            <div class="col-auto">
+                                                                <figure class="avatar avatar-40 mb-0 coverimg rounded-circle">
+                                                                    <img src="assets/img/modern-ai-image/user-7.jpg" alt="">
+                                                                </figure>
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <p class="mb-0 fw-medium">David Warner</p>
+                                                                <p class="text-secondary small">32 years, United Kingdom</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">david@sales..core.com</p>
+                                                        <p class="text-secondary small">+44 8466585****1154</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-light rounded-pill text-bg-success">Fresh Case</span>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">9:10 AM - 9 June 2024</p>
+                                                        <p class="text-secondary small">Allergies -Dr. Ryan Sylia</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-light rounded-pill text-bg-warning">Pending</span>
+                                                    </td>
+                                                    <td>
+                                                        <a href="investment-view-patient.html" class="btn btn-square btn-link" data-bs-toggle="tooltip" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <div class="dropdown d-inline-block">
+                                                            <a class="btn btn-link no-caret" data-bs-toggle="dropdown">
+                                                                <i class="bi bi-three-dots"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Edit</a></li>
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Move</a></li>
+                                                                <li><a class="dropdown-item theme-red" href="javascript:void(0)">Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>105ID</td>
+                                                    <td>
+                                                        <div class="row align-items-center flex-nowrap">
+                                                            <div class="col-auto">
+                                                                <figure class="avatar avatar-40 mb-0 coverimg rounded-circle">
+                                                                    <img src="assets/img/modern-ai-image/user-8.jpg" alt="">
+                                                                </figure>
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <p class="mb-0 fw-medium">Winnie John</p>
+                                                                <p class="text-secondary small">18 years, Australia</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">winnie@sales..core.com</p>
+                                                        <p class="text-secondary small">+44 8466585****1154</p>
+                                                    </td>
+                                                    <td><span class="badge badge-light rounded-pill text-bg-success">Fresh Case</span></td>
+                                                    <td>
+                                                        <p class="mb-0">10:30 AM - 9 June 2024</p>
+                                                        <p class="text-secondary small">Colds and flu - Dr. Ryan Sylia</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-light rounded-pill text-bg-primary">Waiting</span>
+                                                    </td>
+                                                    <td><a href="investment-view-patient.html" class="btn btn-square btn-link" data-bs-toggle="tooltip" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <div class="dropdown d-inline-block">
+                                                            <a class="btn btn-link no-caret" data-bs-toggle="dropdown">
+                                                                <i class="bi bi-three-dots"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Edit</a></li>
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Move</a></li>
+                                                                <li><a class="dropdown-item theme-red" href="javascript:void(0)">Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>058ID</td>
+                                                    <td>
+                                                        <div class="row align-items-center flex-nowrap">
+                                                            <div class="col-auto">
+                                                                <figure class="avatar avatar-40 mb-0 coverimg rounded-circle">
+                                                                    <img src="assets/img/modern-ai-image/user-1.jpg" alt="">
+                                                                </figure>
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <p class="mb-0 fw-medium">Alicia Smith</p>
+                                                                <p class="text-secondary small">30 years, United States</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">alicia@sales..core.com</p>
+                                                        <p class="text-secondary small">+44 8466585****1154</p>
+                                                    </td>
+                                                    <td><span class="badge badge-light rounded-pill text-bg-theme-accent-1">Revisit</span>
+                                                        <span class="badge badge-light rounded-pill text-bg-theme-accent-1">VIP</span>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">11:30 AM - 9 June 2024</p>
+                                                        <p class="text-secondary small">Diarrhea - Dr. Ryan Sylia</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-light rounded-pill text-bg-success">Complete</span>
+                                                    </td>
+                                                    <td><a href="investment-view-patient.html" class="btn btn-square btn-link" data-bs-toggle="tooltip" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <div class="dropdown d-inline-block">
+                                                            <a class="btn btn-link no-caret" data-bs-toggle="dropdown">
+                                                                <i class="bi bi-three-dots"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Edit</a></li>
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Move</a></li>
+                                                                <li><a class="dropdown-item theme-red" href="javascript:void(0)">Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>500ID</td>
+                                                    <td>
+                                                        <div class="row align-items-center flex-nowrap">
+                                                            <div class="col-auto">
+                                                                <figure class="avatar avatar-40 mb-0 coverimg rounded-circle">
+                                                                    <img src="assets/img/modern-ai-image/user-2.jpg" alt="">
+                                                                </figure>
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <p class="mb-0 fw-medium">Jr. Chen Li</p>
+                                                                <p class="text-secondary small">9 years, United Kingdom</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">cheli@sales..core.com</p>
+                                                        <p class="text-secondary small">+44 8466585****1154</p>
+                                                    </td>
+                                                    <td><span class="badge badge-light rounded-pill text-bg-theme-accent-1">Revisit</span>
+                                                        <span class="badge badge-light rounded-pill text-bg-primary">Regular</span>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">11:55 AM - 9 June 2024</p>
+                                                        <p class="text-secondary small">Conjunctivitis - Dr. Ryan Sylia</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-light rounded-pill text-bg-danger">Rejected</span>
+                                                    </td>
+                                                    <td><a href="investment-view-patient.html" class="btn btn-square btn-link" data-bs-toggle="tooltip" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <div class="dropdown d-inline-block">
+                                                            <a class="btn btn-link no-caret" data-bs-toggle="dropdown">
+                                                                <i class="bi bi-three-dots"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Edit</a></li>
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Move</a></li>
+                                                                <li><a class="dropdown-item theme-red" href="javascript:void(0)">Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2054ID</td>
+                                                    <td>
+                                                        <div class="row align-items-center flex-nowrap">
+                                                            <div class="col-auto">
+                                                                <figure class="avatar avatar-40 mb-0 coverimg rounded-circle">
+                                                                    <img src="assets/img/modern-ai-image/user-3.jpg" alt="">
+                                                                </figure>
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <p class="mb-0 fw-medium">David Warner</p>
+                                                                <p class="text-secondary small">10 years, United Kingdom</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">david@sales..core.com</p>
+                                                        <p class="text-secondary small">+44 8466585****1154</p>
+                                                    </td>
+                                                    <td><span class="badge badge-light rounded-pill text-bg-theme-accent-1">Revisit</span>
+                                                        <span class="badge badge-light rounded-pill text-bg-theme-accent-1">VIP</span>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">12:15 PM - 9 June 2024</p>
+                                                        <p class="text-secondary small">Headaches - Dr. Ryan Sylia</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-light rounded-pill text-bg-warning">Pending</span>
+                                                    </td>
+                                                    <td><a href="investment-view-patient.html" class="btn btn-square btn-link" data-bs-toggle="tooltip" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <div class="dropdown d-inline-block">
+                                                            <a class="btn btn-link no-caret" data-bs-toggle="dropdown">
+                                                                <i class="bi bi-three-dots"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Edit</a></li>
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Move</a></li>
+                                                                <li><a class="dropdown-item theme-red" href="javascript:void(0)">Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>105ID</td>
+                                                    <td>
+                                                        <div class="row align-items-center flex-nowrap">
+                                                            <div class="col-auto">
+                                                                <figure class="avatar avatar-40 mb-0 coverimg rounded-circle">
+                                                                    <img src="assets/img/modern-ai-image/user-4.jpg" alt="">
+                                                                </figure>
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <p class="mb-0 fw-medium">Winnie John</p>
+                                                                <p class="text-secondary small">15 years, Australia</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">winnie@sales..core.com</p>
+                                                        <p class="text-secondary small">+44 8466585****1154</p>
+                                                    </td>
+                                                    <td><span class="badge badge-light rounded-pill text-bg-success">Fresh Case</span></td>
+                                                    <td>
+                                                        <p class="mb-0">1:30 PM - 9 June 2024</p>
+                                                        <p class="text-secondary small">Mononucleosis - Dr. Ryan Sylia</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-light rounded-pill text-bg-theme-accent-1">Waiting</span>
+                                                    </td>
+                                                    <td><a href="investment-view-patient.html" class="btn btn-square btn-link" data-bs-toggle="tooltip" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <div class="dropdown d-inline-block">
+                                                            <a class="btn btn-link no-caret" data-bs-toggle="dropdown">
+                                                                <i class="bi bi-three-dots"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Edit</a></li>
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Move</a></li>
+                                                                <li><a class="dropdown-item theme-red" href="javascript:void(0)">Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>058ID</td>
+                                                    <td>
+                                                        <div class="row align-items-center flex-nowrap">
+                                                            <div class="col-auto">
+                                                                <figure class="avatar avatar-40 mb-0 coverimg rounded-circle">
+                                                                    <img src="assets/img/modern-ai-image/user-5.jpg" alt="">
+                                                                </figure>
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <p class="mb-0 fw-medium">Alicia Smith</p>
+                                                                <p class="text-secondary small">21 years, United States</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">alicia@sales..core.com</p>
+                                                        <p class="text-secondary small">+44 8466585****1154</p>
+                                                    </td>
+                                                    <td><span class="badge badge-light rounded-pill text-bg-success">Fresh Case</span></td>
+                                                    <td>
+                                                        <p class="mb-0">2:20 AM - 9 June 2024</p>
+                                                        <p class="text-secondary small">Stomach aches - Dr. Ryan Sylia</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-light rounded-pill text-bg-info">In-Progress</span>
+                                                    </td>
+                                                    <td><a href="investment-view-patient.html" class="btn btn-square btn-link" data-bs-toggle="tooltip" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <div class="dropdown d-inline-block">
+                                                            <a class="btn btn-link no-caret" data-bs-toggle="dropdown">
+                                                                <i class="bi bi-three-dots"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Edit</a></li>
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Move</a></li>
+                                                                <li><a class="dropdown-item theme-red" href="javascript:void(0)">Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>501ID</td>
+                                                    <td>
+                                                        <div class="row align-items-center flex-nowrap">
+                                                            <div class="col-auto">
+                                                                <figure class="avatar avatar-40 mb-0 coverimg rounded-circle">
+                                                                    <img src="assets/img/modern-ai-image/user-6.jpg" alt="">
+                                                                </figure>
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <p class="mb-0 fw-medium">Jr. Chen Li</p>
+                                                                <p class="text-secondary small">45 years, United Kingdom</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">cheli@sales..core.com</p>
+                                                        <p class="text-secondary small">+44 8466585****1154</p>
+                                                    </td>
+                                                    <td><span class="badge badge-light rounded-pill text-bg-theme-accent-1">Revisit</span>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">3:30 PM - 9 June 2024</p>
+                                                        <p class="text-secondary small">Allergies - Dr. Ryan Sylia</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-light rounded-pill text-bg-theme-accent-1">Cancelled</span>
+                                                    </td>
+                                                    <td><a href="investment-view-patient.html" class="btn btn-square btn-link" data-bs-toggle="tooltip" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <div class="dropdown d-inline-block">
+                                                            <a class="btn btn-link no-caret" data-bs-toggle="dropdown">
+                                                                <i class="bi bi-three-dots"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Edit</a></li>
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Move</a></li>
+                                                                <li>
+                                                                    <a class="dropdown-item theme-red" href="javascript:void(0)">Delete</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3052ID</td>
+                                                    <td>
+                                                        <div class="row align-items-center flex-nowrap">
+                                                            <div class="col-auto">
+                                                                <figure class="avatar avatar-40 mb-0 coverimg rounded-circle">
+                                                                    <img src="assets/img/modern-ai-image/user-7.jpg" alt="">
+                                                                </figure>
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <p class="mb-0 fw-medium">David Warner</p>
+                                                                <p class="text-secondary small">55 years, United Kingdom</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">david@sales..core.com</p>
+                                                        <p class="text-secondary small">+44 8466585****1154</p>
+                                                    </td>
+                                                    <td><span class="badge badge-light rounded-pill text-bg-theme-accent-1">Revisit</span>
+                                                        <span class="badge badge-light rounded-pill text-bg-primary">Regular</span>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">9:10 AM - 9 June 2024</p>
+                                                        <p class="text-secondary small">Colds and flu - Dr. Ryan Sylia</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-light rounded-pill text-bg-warning">Pending</span>
+                                                    </td>
+                                                    <td><a href="investment-view-patient.html" class="btn btn-square btn-link" data-bs-toggle="tooltip" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <div class="dropdown d-inline-block">
+                                                            <a class="btn btn-link no-caret" data-bs-toggle="dropdown">
+                                                                <i class="bi bi-three-dots"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Edit</a></li>
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Move</a></li>
+                                                                <li><a class="dropdown-item theme-red" href="javascript:void(0)">Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3052ID</td>
+                                                    <td>
+                                                        <div class="row align-items-center flex-nowrap">
+                                                            <div class="col-auto">
+                                                                <figure class="avatar avatar-40 mb-0 coverimg rounded-circle">
+                                                                    <img src="assets/img/modern-ai-image/user-7.jpg" alt="">
+                                                                </figure>
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <p class="mb-0 fw-medium">David Warner</p>
+                                                                <p class="text-secondary small">55 years, United Kingdom</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">david@sales..core.com</p>
+                                                        <p class="text-secondary small">+44 8466585****1154</p>
+                                                    </td>
+                                                    <td><span class="badge badge-light rounded-pill text-bg-theme-accent-1">Revisit</span>
+                                                        <span class="badge badge-light rounded-pill text-bg-primary">Regular</span>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">9:10 AM - 9 June 2024</p>
+                                                        <p class="text-secondary small">Colds and flu - Dr. Ryan Sylia</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-light rounded-pill text-bg-warning">Pending</span>
+                                                    </td>
+                                                    <td><a href="investment-view-patient.html" class="btn btn-square btn-link" data-bs-toggle="tooltip" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <div class="dropdown d-inline-block">
+                                                            <a class="btn btn-link no-caret" data-bs-toggle="dropdown">
+                                                                <i class="bi bi-three-dots"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Edit</a></li>
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Move</a></li>
+                                                                <li><a class="dropdown-item theme-red" href="javascript:void(0)">Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3105ID</td>
+                                                    <td>
+                                                        <div class="row align-items-center flex-nowrap">
+                                                            <div class="col-auto">
+                                                                <figure class="avatar avatar-40 mb-0 coverimg rounded-circle">
+                                                                    <img src="assets/img/modern-ai-image/user-8.jpg" alt="">
+                                                                </figure>
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <p class="mb-0 fw-medium">Winnie John</p>
+                                                                <p class="text-secondary small">11 years, Australia</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">winnie@sales..core.com</p>
+                                                        <p class="text-secondary small">+44 8466585****1154</p>
+                                                    </td>
+                                                    <td><span class="badge badge-light rounded-pill text-bg-theme-accent-1">Revisit</span>
+                                                        <span class="badge badge-light rounded-pill text-bg-primary">Regular</span>
+                                                    </td>
+                                                    <td>
+                                                        <p class="mb-0">10:30 AM - 9 June 2024</p>
+                                                        <p class="text-secondary small">Conjunctivitis - Dr. Ryan Sylia</p>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-light rounded-pill text-bg-primary">Waiting</span>
+                                                    </td>
+                                                    <td><a href="investment-view-patient.html" class="btn btn-square btn-link" data-bs-toggle="tooltip" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <div class="dropdown d-inline-block">
+                                                            <a class="btn btn-link no-caret" data-bs-toggle="dropdown">
+                                                                <i class="bi bi-three-dots"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Edit</a></li>
+                                                                <li><a class="dropdown-item" href="javascript:void(0)">Move</a></li>
+                                                                <li><a class="dropdown-item theme-red" href="javascript:void(0)">Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
+                               
                             </div>
-
-                            <div class="card adminuiux-card mb-3">
-                                <div class="card-header">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col">
-                                            <p class="h6">Modal Scrolling Content</p>
-                                        </div>
-                                        <div class="col-auto">
-                                            <button type="button" class="btn btn-outline-theme btn-square" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false">
-                                                <i class="bi bi-code-slash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <button type="button" class="btn btn-theme" data-bs-toggle="modal" data-bs-target="#scrollingmodal">
-                                        Scrolling modal
-                                    </button>
-                                </div>
-                                <div class="collapse" id="collapse2">
-                                    <div class="card-footer border-top">
-                                        <div class="bg-dark text-white p-2 rounded my-2">
-                                            <pre class="mb-2"><code class="code rounded language-html">
-&lt;button type="button" class="btn btn-theme" data-bs-toggle="modal" data-bs-target="#scrollingmodal"&gt;
-    Scrolling modal
-&lt;/button&gt;
-
-&lt;!-- scrolling Modal --&gt;
-&lt;div class="modal fade" id="scrollingmodal" tabindex="-1" aria-labelledby="scrollingmodalLabel" aria-hidden="true"&gt;
-    &lt;div class="modal-dialog modal-dialog-scrollable"&gt;
-        &lt;div class="modal-content"&gt;
-            &lt;div class="modal-header"&gt;
-                &lt;p class="modal-title h5" id="scrollingmodalLabel"&gt;modal-dialog-scrollable&lt;/p&gt;
-                &lt;button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"&gt;&lt;/button&gt;
-            &lt;/div&gt;
-            &lt;div class="modal-body"&gt;
-                &lt;p class="mb-5"&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla id varius sapien, eget finibus leo. Mauris lorem elit, efficitur eget enim et, rhoncus hendrerit ligula. Phasellus lobortis massa hendrerit velit volutpat, sed hendrerit ante semper. Sed at interdum turpis. Donec elementum lobortis magna, porttitor luctus dui gravida vel. Donec vestibulum consectetur elit, id finibus erat egestas nec. Curabitur efficitur rutrum arcu, sed interdum est consequat eu. Curabitur lacus leo, semper fringilla lacus in, vehicula rhoncus nisl. Vestibulum efficitur ligula quis ornare pharetra. Nulla tempus ultricies neque interdum luctus. Integer mollis laoreet eleifend. Nullam eu luctus massa, nec tempor mauris.&lt;/p&gt;
-                &lt;p class="mb-5"&gt;Curabitur vitae odio enim. Vestibulum condimentum diam sit amet lacus dignissim, vitae condimentum neque dictum. Aliquam rhoncus, lorem sit amet mollis scelerisque, mi felis bibendum sapien, in sollicitudin nisl lorem eu nisi. Vivamus elementum quam vitae aliquam tempus. Ut pulvinar efficitur ante, in varius mi lacinia et. Vivamus consequat quam lectus. Pellentesque tincidunt condimentum nisi, sed semper turpis cursus a. Nulla id libero a augue placerat elementum id ornare ipsum.&lt;/p&gt;
-                &lt;p class="mb-5"&gt;Suspendisse auctor pretium felis bibendum blandit. Mauris volutpat, massa quis tempus sodales, tortor odio lobortis odio, et pulvinar mauris tortor eget augue. Suspendisse vel pulvinar massa, hendrerit laoreet turpis. Donec eu urna posuere, porttitor lectus at, porta mi. Aliquam erat volutpat. Proin nec tortor sagittis, ornare turpis a, iaculis odio. Nulla id enim non dolor gravida porttitor. Vestibulum eget est lacus. Vivamus quis libero vitae nibh ullamcorper sagittis nec in sem.&lt;/p&gt;
-                &lt;p class="mb-5"&gt;Morbi lectus risus, ultricies vel justo in, efficitur semper dui. Sed sit amet leo ullamcorper, viverra est quis, blandit turpis. Phasellus tincidunt lectus non lorem suscipit, in dignissim est ultrices. In cursus risus sed quam ornare volutpat. Sed in tortor molestie, viverra erat sed, ullamcorper eros. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse potenti.&lt;/p&gt;
-                &lt;p class="mb-5"&gt;Praesent dapibus dolor vel urna sagittis, id vehicula tortor varius. Aenean feugiat egestas posuere. Maecenas at condimentum tellus. Aenean elementum pharetra velit, sit amet porttitor erat efficitur eu. In sed tellus eu mi malesuada porttitor. Donec ultricies bibendum leo, ac venenatis quam. Phasellus sed risus id leo rhoncus cursus eu tincidunt turpis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi justo libero, consectetur at tristique et, rhoncus quis metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Mauris at cursus turpis. Integer quis nibh tempus, tincidunt leo sed, lacinia turpis. Sed facilisis orci a elit sagittis condimentum. Ut laoreet eget ex ut euismod. Donec vitae ipsum non lectus mollis ultricies. In hac habitasse platea dictumst.&lt;/p&gt;
-            &lt;/div&gt;
-            &lt;div class="modal-footer"&gt;
-                &lt;button type="button" class="btn btn-secondary" data-bs-dismiss="modal"&gt;Close&lt;/button&gt;
-                &lt;button type="button" class="btn btn-theme"&gt;Save changes&lt;/button&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-                    </code></pre>
-                                            <button type="button" class="btn btn-outline-light  btn-square copycode"><i class="bi bi-clipboard"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card adminuiux-card mb-3">
-                                <div class="card-header">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col">
-                                            <p class="h6">Modal Vertical Middle</p>
-                                        </div>
-                                        <div class="col-auto">
-                                            <button type="button" class="btn btn-outline-theme btn-square" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false">
-                                                <i class="bi bi-code-slash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <button type="button" class="btn btn-theme" data-bs-toggle="modal" data-bs-target="#verticalmiddlemodal">
-                                        Vertical middle modal
-                                    </button>
-                                </div>
-                                <div class="collapse" id="collapse3">
-                                    <div class="card-footer border-top">
-                                        <div class="bg-dark text-white p-2 rounded my-2">
-                                            <pre class="mb-2"><code class="code rounded language-html">
-&lt;button type="button" class="btn btn-theme" data-bs-toggle="modal" data-bs-target="#verticalmiddlemodal"&gt;
-    Vertical middle modal
-&lt;/button&gt;
-
-&lt;!-- vertical middle Modal --&gt;
-&lt;div class="modal fade" id="verticalmiddlemodal" tabindex="-1" aria-labelledby="verticalmiddlemodalLabel" aria-hidden="true"&gt;
-    &lt;div class="modal-dialog modal-dialog-centered"&gt;
-        &lt;div class="modal-content"&gt;
-            &lt;div class="modal-header"&gt;
-                &lt;p class="modal-title h5" id="verticalmiddlemodalLabel"&gt;modal-dialog-centered&lt;/p&gt;
-                &lt;button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"&gt;&lt;/button&gt;
-            &lt;/div&gt;
-            &lt;div class="modal-body"&gt;
-                ...
-            &lt;/div&gt;
-            &lt;div class="modal-footer"&gt;
-                &lt;button type="button" class="btn btn-secondary" data-bs-dismiss="modal"&gt;Close&lt;/button&gt;
-                &lt;button type="button" class="btn btn-theme"&gt;Save changes&lt;/button&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-                    </code></pre>
-                                            <button type="button" class="btn btn-outline-light  btn-square copycode"><i class="bi bi-clipboard"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card adminuiux-card mb-3">
-                                <div class="card-header">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col">
-                                            <p class="h6">Modal Sizes</p>
-                                        </div>
-                                        <div class="col-auto">
-                                            <button type="button" class="btn btn-outline-theme btn-square" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false">
-                                                <i class="bi bi-code-slash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <button type="button" class="btn btn-theme me-2 my-1" data-bs-toggle="modal" data-bs-target="#xlmodal">
-                                        Extra Large modal
-                                    </button>
-                                    <button type="button" class="btn btn-theme me-2 my-1" data-bs-toggle="modal" data-bs-target="#lgmodal">
-                                        Large modal
-                                    </button> my-1
-                                    <button type="button" class="btn btn-theme me-2 my-1" data-bs-toggle="modal" data-bs-target="#smmodal">
-                                        small modal
-                                    </button>
-                                </div>
-                                <div class="collapse" id="collapse4">
-                                    <div class="card-footer border-top">
-                                        <div class="bg-dark text-white p-2 rounded my-2">
-                                            <pre class="mb-2"><code class="code rounded language-html">
-&lt;button type="button" class="btn btn-theme me-2" data-bs-toggle="modal" data-bs-target="#xlmodal"&gt;
-    Extra Large modal
-&lt;/button&gt;
-&lt;button type="button" class="btn btn-theme me-2" data-bs-toggle="modal" data-bs-target="#lgmodal"&gt;
-    Large modal
-&lt;/button&gt;
-&lt;button type="button" class="btn btn-theme me-2" data-bs-toggle="modal" data-bs-target="#smmodal"&gt;
-    small modal
-&lt;/button&gt;
-
-&lt;!-- modal-xl Modal --&gt;
-&lt;div class="modal fade" id="xlmodal" tabindex="-1" aria-labelledby="xlmodalLabel" aria-hidden="true"&gt;
-    &lt;div class="modal-dialog modal-xl"&gt;
-        &lt;div class="modal-content"&gt;
-            &lt;div class="modal-header"&gt;
-                &lt;p class="modal-title h5" id="xlmodalLabel"&gt;modal-xl&lt;/p&gt;
-                &lt;button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"&gt;&lt;/button&gt;
-            &lt;/div&gt;
-            &lt;div class="modal-body"&gt;
-                ...
-            &lt;/div&gt;
-            &lt;div class="modal-footer"&gt;
-                &lt;button type="button" class="btn btn-secondary" data-bs-dismiss="modal"&gt;Close&lt;/button&gt;
-                &lt;button type="button" class="btn btn-theme"&gt;Save changes&lt;/button&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;!-- modal-lg Modal --&gt;
-&lt;div class="modal fade" id="lgmodal" tabindex="-1" aria-labelledby="lgmodalLabel" aria-hidden="true"&gt;
-    &lt;div class="modal-dialog modal-lg"&gt;
-        &lt;div class="modal-content"&gt;
-            &lt;div class="modal-header"&gt;
-                &lt;p class="modal-title h5" id="lgmodalLabel"&gt;modal-lg&lt;/p&gt;
-                &lt;button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"&gt;&lt;/button&gt;
-            &lt;/div&gt;
-            &lt;div class="modal-body"&gt;
-                ...
-            &lt;/div&gt;
-            &lt;div class="modal-footer"&gt;
-                &lt;button type="button" class="btn btn-secondary" data-bs-dismiss="modal"&gt;Close&lt;/button&gt;
-                &lt;button type="button" class="btn btn-theme"&gt;Save changes&lt;/button&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;!-- modal-sm Modal --&gt;
-&lt;div class="modal fade" id="smmodal" tabindex="-1" aria-labelledby="smmodalLabel" aria-hidden="true"&gt;
-    &lt;div class="modal-dialog modal-sm"&gt;
-        &lt;div class="modal-content"&gt;
-            &lt;div class="modal-header"&gt;
-                &lt;p class="modal-title h5" id="smmodalLabel"&gt;modal-sm&lt;/p&gt;
-                &lt;button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"&gt;&lt;/button&gt;
-            &lt;/div&gt;
-            &lt;div class="modal-body"&gt;
-                ...
-            &lt;/div&gt;
-            &lt;div class="modal-footer"&gt;
-                &lt;button type="button" class="btn btn-secondary" data-bs-dismiss="modal"&gt;Close&lt;/button&gt;
-                &lt;button type="button" class="btn btn-theme"&gt;Save changes&lt;/button&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-                    </code></pre>
-                                            <button type="button" class="btn btn-outline-light  btn-square copycode"><i class="bi bi-clipboard"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card adminuiux-card mb-3">
-                                <div class="card-header">
-                                    <div class="row gx-3 align-items-center">
-                                        <div class="col">
-                                            <p class="h6">Modal Fullscreen</p>
-                                        </div>
-                                        <div class="col-auto">
-                                            <button type="button" class="btn btn-outline-theme btn-square" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false">
-                                                <i class="bi bi-code-slash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <p>Another override is the option to pop up a modal that covers the user viewport, available via modifier classes that are placed on a <code>.modal-dialog</code>.</p>
-                                    <table class="table table-sm mb-3">
-                                        <thead>
-                                            <tr>
-                                                <th>Class</th>
-                                                <th>Fullscreen in</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td><code>.modal-fullscreen</code></td>
-                                                <td>Always</td>
-                                            </tr>
-                                            <tr>
-                                                <td><code>.modal-fullscreen-sm-down</code></td>
-                                                <td><code>576px</code></td>
-                                            </tr>
-                                            <tr>
-                                                <td><code>.modal-fullscreen-md-down</code></td>
-                                                <td><code>768px</code></td>
-                                            </tr>
-                                            <tr>
-                                                <td><code>.modal-fullscreen-lg-down</code></td>
-                                                <td><code>992px</code></td>
-                                            </tr>
-                                            <tr>
-                                                <td><code>.modal-fullscreen-xl-down</code></td>
-                                                <td><code>1200px</code></td>
-                                            </tr>
-                                            <tr>
-                                                <td><code>.modal-fullscreen-xxl-down</code></td>
-                                                <td><code>1400px</code></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <code>
-            <!-- Full screen modal -->
-            &lt;div class="modal-dialog modal-fullscreen-sm-down"&gt;&lt;/div&gt;
-            </code>
-                                    <br>
-                                    <button type="button" class="btn btn-theme me-2" data-bs-toggle="modal" data-bs-target="#fullscreenmodal">
-                                        Fullscreen modal
-                                    </button>
-                                </div>
-                                <div class="collapse" id="collapse5">
-                                    <div class="card-footer border-top">
-                                        <div class="bg-dark text-white p-2 rounded my-2">
-                                            <pre class="mb-2"><code class="code rounded language-html">
-&lt;button type="button" class="btn btn-theme me-2" data-bs-toggle="modal" data-bs-target="#fullscreenmodal"&gt;
-    Fullscreen modal
-&lt;/button&gt;
-			
-&lt;!-- fullscreen Modal --&gt;
-&lt;div class="modal fade" id="fullscreenmodal" tabindex="-1" aria-labelledby="fullscreenmodalLabel" aria-hidden="true"&gt;
-    &lt;div class="modal-dialog modal-fullscreen"&gt;
-        &lt;div class="modal-content"&gt;
-            &lt;div class="modal-header"&gt;
-                &lt;p class="modal-title h5" id="fullscreenmodalLabel"&gt;modal-fullscreen&lt;/p&gt;
-                &lt;button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"&gt;&lt;/button&gt;
-            &lt;/div&gt;
-            &lt;div class="modal-body"&gt;
-                ...
-            &lt;/div&gt;
-            &lt;div class="modal-footer"&gt;
-                &lt;button type="button" class="btn btn-secondary" data-bs-dismiss="modal"&gt;Close&lt;/button&gt;
-                &lt;button type="button" class="btn btn-theme"&gt;Save changes&lt;/button&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-                    </code></pre>
-                                            <button type="button" class="btn btn-outline-light  btn-square copycode"><i class="bi bi-clipboard"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- component footer -->
-                            <div class="mb-3">
-                                <div class="row gx-3">
-                                    <div class="col">
-                                        <a href="component-list-groups.html" class="btn btn-accent my-2"><i class="bi bi-arrow-left mr-2"></i> List Groups</a>
-                                    </div>
-                                    <div class="col-auto">
-                                        <a href="component-off-canvas.html" class="btn btn-theme my-2">Off Canvas <i class="bi bi-arrow-right ms-2"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                                     @endsection

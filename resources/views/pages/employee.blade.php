@@ -23,7 +23,8 @@
                                                 <tr>
                                                     <td>   <button class="btn btn-link btn-square btn-icon btn-link-header" type="button" onclick="openSearch()">
                     <i data-feather="search"></i>
-                </button></td>
+                </button>
+            </td>
                                                 </tr>
                                                 <tr>
                                                     <td>2054ID</td>
