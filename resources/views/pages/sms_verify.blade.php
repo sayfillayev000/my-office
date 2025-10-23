@@ -4,7 +4,7 @@
     <meta charset="utf-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> 
     <title>SMS Verify - Synterra</title> 
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}"> 
+    <link rel="icon" type="image/png" href="{{ secure_asset('assets/img/favicon.png') }}"> 
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" crossorigin="anonymous">
@@ -35,7 +35,7 @@
             @endif
             <p class="text-muted">Telefon raqamingizga yuborilgan 4 xonali kodni kiriting</p>
 
-            <form method="POST" action="{{ app()->environment('local') ? url('/sms-verify') : url('/backm/sms-verify') }}">
+            <form method="POST" action="{{ app()->environment('local') ? url('/sms-verify') : secure_url('/backm/sms-verify') }}">
                 @csrf
                 <div class="form-floating mb-3">
                     <input type="text" 
@@ -53,7 +53,7 @@
 
             <div>
                 <small class="text-muted">Kodni olmadingizmi?</small><br>
-                <form method="POST" action="{{ app()->environment('local') ? url('/sms-resend') : url('/backm/sms-resend') }}">
+                <form method="POST" action="{{ app()->environment('local') ? url('/sms-resend') : secure_url('/backm/sms-resend') }}">
                     @csrf
                     <button type="submit" class="btn btn-link p-0">Qayta yuborish</button>
                 </form>

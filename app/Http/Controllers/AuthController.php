@@ -14,10 +14,12 @@ class AuthController extends Controller
 {
     private function baseUrl($path = '')
     {
-        // 🔹 local bo‘lsa oddiy path, server bo‘lsa /backm qo‘shib yuboramiz
         $prefix = app()->environment('local') ? '' : '/backm';
-        return url($prefix . $path);
+        return app()->environment('local') 
+            ? url($prefix . $path)
+            : secure_url($prefix . $path);
     }
+
 
     public function showLogin()
     {
@@ -27,9 +29,6 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $phone = preg_replace('/\D/', '', $request->phone); // faqat raqamlar qoldiradi
-        if (str_starts_with($phone, '998')) {
-            $phone = substr($phone, 3); // 998 ni olib tashlaydi
-        }
     
         $request->merge(['phone' => $phone]);
     
@@ -45,8 +44,7 @@ class AuthController extends Controller
             return back()->withErrors(['domain' => 'Subdomain topilmadi!']);
         }
     
-        // Normalize stored phone numbers for comparison: compare only digits and remove leading '998' if present
-        $employee = User::whereRaw("(case when regexp_replace(phone, '\\\\D', '', 'g') like '998%' then substr(regexp_replace(phone, '\\\\D', '', 'g'), 4) else regexp_replace(phone, '\\\\D', '', 'g') end) = ?", [$phone])
+        $employee = User::whereRaw("regexp_replace(phone, '\\D', '', 'g') = ?", [$phone])
             ->where('organization_id', $organization->id)
             ->first();
     

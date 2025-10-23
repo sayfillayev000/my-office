@@ -114,19 +114,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/proxy/menu', function (\Illuminate\Http\Request $request) {
         $sessionId = $request->input('sessionid');
 
-    // 4️⃣ Tashqi API ga yuboramiz
-    $response = Http::withHeaders([
-        "Content-Type" => "application/json"
-    ])->withOptions([
-        "verify" => false
-    ])->post("https://my.synterra.uz/backs/menu/get_list", [
-        "sessionid" => $sessionId
-    ]);
-
         $response = Http::withHeaders([
             "Content-Type" => "application/json"
         ])->withOptions([
-            "verify" => false // SSL cert error bo'lsa oldini oladi
+            "verify" => false
         ])->post("https://my.synterra.uz/backs/menu/get_list", [
             "sessionid" => $sessionId
         ]);
