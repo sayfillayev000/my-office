@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Route;
+use App\Models\User;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -20,8 +22,7 @@ class AppServiceProvider extends ServiceProvider
    
     public function boot()
     {
-        if (app()->environment('production')) {
-            URL::forceScheme('https');
-        }
+        // Custom route model binding for employee
+        Route::model('employee', User::class);
     }
 }
