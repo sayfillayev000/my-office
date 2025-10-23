@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- dir="rtl"-->
-
 <head>
-    <!-- Required meta tags  -->
+    <!-- Meta -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-<meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>InvestemntUIUX Mobile - Bootstrap HTML Admin template - adminuiux.com</title>
-    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Synterra Admin</title>
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@100;400;500;600&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@100;400;500;600&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap"
+        rel="stylesheet">
+
     <style>
         :root {
             --adminuiux-content-font: 'Roboto';
@@ -24,7 +25,15 @@
         }
     </style>
 
-<script defer src="assets/js/app.js?7e4316178ad989670ad8"></script><link href="assets/css/app.css?7e4316178ad989670ad8" rel="stylesheet"></head>
+    <!-- ✅ CSS (Bootstrap + App) -->
+    <link href="{{ asset('assets/libs/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/app.css') }}" rel="stylesheet">
+
+    <!-- Page level CSS (optional) -->
+    <link href="{{ asset('assets/css/component-smartwizard.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/css/smart_wizard_all.min.css" rel="stylesheet" />
+</head>
+
 
     <body class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed theme-blue roundedui" data-theme="theme-blue" data-sidebarfill="adminuiux-sidebar-fill-white" data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" tabindex="0">
         <!-- Pageloader -->
@@ -573,43 +582,18 @@
                             @yield('content')
 
 
-                            <!-- component footer -->
-                            <div class="mb-3">
-                                <div class="row gx-3">
-                                    <div class="col">
-                                        <a href="component-chartjs.html" class="btn btn-accent my-2"><i class="bi bi-arrow-left mr-2"></i> Chart Js</a>
-                                    </div>
-                                    <div class="col-auto">
-                                        <a href="component-swiper-carousel.html" class="btn btn-theme my-2">Swiper Carousel <i class="bi bi-arrow-right ms-2"></i></a>
-                                    </div>
-                                </div>
-                            </div>
+                          
                         </div>
                         </main>
                 </div>
-                <!-- standard footer -->
-<footer class="adminuiux-footer has-adminuiux-sidebar mt-auto">
-    <div class="container-fluid">
-        <div class="row gx-3">
-            <div class="col-12 col-md col-lg text-center text-md-start py-2">
-                <span class="small">&copy;2024,
-                    <a href="https://adminuiux.com" target="_blank">InvestmentUX - Adminuiux</a> on Earth ❤️
-                </span>
-            </div>
-            <div class="col-12 col-md-auto col-lg-auto align-self-center">
-                <ul class="nav small justify-content-center">
-                    <li class="nav-item"><a class="nav-link" href="help-center.html">Help</a></li>
-                    <li class="nav-item">|</li>
-                    <li class="nav-item"><a class="nav-link" href="terms-of-use.html">Terms</a></li>
-                    <li class="nav-item">|</li>
-                    <li class="nav-item"><a class="nav-link" href="privacy-policy.html">Privacy Policy</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</footer>
 
                     <!-- Page Level js -->
+                     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- SmartWizard JS -->
+<script src="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/js/jquery.smartWizard.min.js"></script>
+
+    <script src="{{ asset('assets/js/app.js') }}"></script>
     <script>
 document.addEventListener("DOMContentLoaded", () => {
     const sidebarMenu = document.getElementById("sidebar-menu");

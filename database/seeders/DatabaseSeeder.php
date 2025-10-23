@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
 
         // Endi bog‘langan jadval seederlari
         $this->call([
+            MenyuFacultySeeder::class,
             MenyuEmployeeAdditionalInfoSeeder::class,
             MenyuRegionSeeder::class,
             MenyuDistrictSeeder::class,
