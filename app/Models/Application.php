@@ -11,5 +11,5 @@ class Application extends Model
     {
         // User modeli aslida Menyu_employee jadvali bilan bog‘liq
         return $this->belongsTo(User::class, 'user_id');
-    }
+    } 
 }

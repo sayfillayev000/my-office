@@ -36,6 +36,7 @@ class User extends Authenticatable
         'monthly_salary',
         'salary_active',
         'fnfl',
+        'tab_number',
         'face1',
         'face2',
         'face3',
@@ -52,6 +53,7 @@ class User extends Authenticatable
         'created_at',
         'fired_date',
         'hired_date',
+        'car_number',
         's_bolim_id',
         's_tashkilot_id',
         'department_fk_id',
@@ -59,7 +61,8 @@ class User extends Authenticatable
         'position_fk_id',
         'tashkilot_fk_id',
         'status_card_image',
-        'door_schedule_ids'
+        'door_schedule_ids',
+        'passport_file_path'
     ];
     protected $hidden = [
         'password',
@@ -148,4 +151,5 @@ class User extends Authenticatable
     {
         return $this->hasOne(MenyuEmployeeadditionalinfo::class, 'employee_id');
     }
+    
 }

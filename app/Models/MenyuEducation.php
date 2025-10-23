@@ -25,10 +25,10 @@ class MenyuEducation extends Model
         'end_date',
         'diploma_number',
         'issue_date',
-        'certificate_number',  // Bu ustun mavjudligiga ishonch hosil qiling
-        'certificate_date',    // Bu ustun mavjudligiga ishonch hosil qiling
+        'certificate_number',
+        'certificate_date',
         'faculty_name',
-        'speciality',
+        'speciality',  // Bu maydon muhim!
         'languages_data'
     ];
 
@@ -40,57 +40,27 @@ class MenyuEducation extends Model
         'languages_data' => 'array',
     ];
 
-    // Automatik ravishda faculty_name va speciality ni to'ldirish
+    // Boot metodini soddalashtiramiz
     protected static function boot()
     {
         parent::boot();
 
-        static::creating(function ($education) {
-            // Agar faculty_id bo'lsa, faculty nomini olish
+        static::saving(function ($education) {
+            // Faculty nomini to'ldirish
             if ($education->faculty_id && empty($education->faculty_name)) {
                 $faculty = \App\Models\MenyuFaculty::find($education->faculty_id);
-                if ($faculty) {
-                    $education->faculty_name = $faculty->name;
-                }
+                $education->faculty_name = $faculty ? $faculty->name : 'Noma\'lum';
             }
 
-            // Agar speciality_id bo'lsa, speciality nomini olish
+            // Mutaxassislik nomini to'ldirish
             if ($education->speciality_id && empty($education->speciality)) {
                 $speciality = \App\Models\MenyuSpeciality::find($education->speciality_id);
-                if ($speciality) {
-                    $education->speciality = $speciality->name;
-                }
-            }
-
-            // Agar hali ham faculty_name bo'sh bo'lsa, default qiymat berish
-            if (empty($education->faculty_name)) {
-                $education->faculty_name = 'Noma\'lum';
-            }
-
-            // Agar hali ham speciality bo'sh bo'lsa, default qiymat berish
-            if (empty($education->speciality)) {
-                $education->speciality = 'Noma\'lum';
-            }
-        });
-
-        static::updating(function ($education) {
-            // Yangilash paytida ham nomlarni yangilash
-            if ($education->faculty_id && empty($education->faculty_name)) {
-                $faculty = \App\Models\MenyuFaculty::find($education->faculty_id);
-                if ($faculty) {
-                    $education->faculty_name = $faculty->name;
-                }
-            }
-
-            if ($education->speciality_id && empty($education->speciality)) {
-                $speciality = \App\Models\MenyuSpeciality::find($education->speciality_id);
-                if ($speciality) {
-                    $education->speciality = $speciality->name;
-                }
+                $education->speciality = $speciality ? $speciality->name : 'Noma\'lum';
             }
         });
     }
 
+    // Aloqalarni to'g'ri belgilash
     public function employee()
     {
         return $this->belongsTo(User::class, 'employee_id');
@@ -119,5 +89,11 @@ class MenyuEducation extends Model
     public function school()
     {
         return $this->belongsTo(MenyuSchool::class, 'school_id');
+    }
+
+    // Mutaxassislikni olish uchun qo'shimcha metod
+    public function getSpecialityNameAttribute()
+    {
+        return $this->speciality ?? $this->specialityRelation?->name ?? 'Noma\'lum';
     }
 }

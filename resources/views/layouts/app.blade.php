@@ -582,43 +582,13 @@
                             @yield('content')
 
 
-                            <!-- component footer -->
-                            <div class="mb-3">
-                                <div class="row gx-3">
-                                    <div class="col">
-                                        <a href="component-chartjs.html" class="btn btn-accent my-2"><i class="bi bi-arrow-left mr-2"></i> Chart Js</a>
-                                    </div>
-                                    <div class="col-auto">
-                                        <a href="component-swiper-carousel.html" class="btn btn-theme my-2">Swiper Carousel <i class="bi bi-arrow-right ms-2"></i></a>
-                                    </div>
-                                </div>
-                            </div>
+                          
                         </div>
                         </main>
                 </div>
-                <!-- standard footer -->
-<footer class="adminuiux-footer has-adminuiux-sidebar mt-auto">
-    <div class="container-fluid">
-        <div class="row gx-3">
-            <div class="col-12 col-md col-lg text-center text-md-start py-2">
-                <span class="small">&copy;2024,
-                    <a href="https://adminuiux.com" target="_blank">InvestmentUX - Adminuiux</a> on Earth ❤️
-                </span>
-            </div>
-            <div class="col-12 col-md-auto col-lg-auto align-self-center">
-                <ul class="nav small justify-content-center">
-                    <li class="nav-item"><a class="nav-link" href="help-center.html">Help</a></li>
-                    <li class="nav-item">|</li>
-                    <li class="nav-item"><a class="nav-link" href="terms-of-use.html">Terms</a></li>
-                    <li class="nav-item">|</li>
-                    <li class="nav-item"><a class="nav-link" href="privacy-policy.html">Privacy Policy</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</footer>
 
                     <!-- Page Level js -->
+                     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- SmartWizard JS -->
 <script src="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/js/jquery.smartWizard.min.js"></script>

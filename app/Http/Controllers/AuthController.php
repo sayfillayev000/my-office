@@ -26,43 +26,52 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        $phone = preg_replace('/\D/', '', $request->phone); // faqat raqamlar qoldiradi
+        if (str_starts_with($phone, '998')) {
+            $phone = substr($phone, 3); // 998 ni olib tashlaydi
+        }
+    
+        $request->merge(['phone' => $phone]);
+    
         $request->validate([
             'phone' => 'required|digits:9',
         ]);
-
+    
         $host = $request->getHost();
         $subdomain = explode('.', $host)[0];
-
+    
         $organization = MenyuOrganization::where('subdomain', $subdomain)->first();
         if (!$organization) {
             return back()->withErrors(['domain' => 'Subdomain topilmadi!']);
         }
-
-        $employee = User::where('phone', $request->phone)
+    
+        // Normalize stored phone numbers for comparison: compare only digits and remove leading '998' if present
+        $employee = User::whereRaw("(case when regexp_replace(phone, '\\\\D', '', 'g') like '998%' then substr(regexp_replace(phone, '\\\\D', '', 'g'), 4) else regexp_replace(phone, '\\\\D', '', 'g') end) = ?", [$phone])
             ->where('organization_id', $organization->id)
             ->first();
-
+    
         if (!$employee) {
             return back()->withErrors(['phone' => 'Ushbu tashkilotda bunday foydalanuvchi topilmadi!']);
         }
-
+    
         $code = rand(1000, 9999);
-
-        Session::put('phone', $request->phone);
+    
+        Session::put('phone', $phone);
         Session::put('organization_id', $organization->id);
         Session::put('sms_code', $code);
         Session::put('sms_expires', now()->addMinutes(5));
-
+    
         Log::info("SMS code generated", [
-            'phone' => $request->phone,
+            'phone' => $phone,
             'organization_id' => $organization->id,
             'code' => $code
         ]);
-
+    
         return redirect()->to($this->baseUrl('/sms-verify'))
             ->with('status', 'SMS kod yuborildi!')
             ->with('code', $code);
     }
+    
 
     public function showSmsVerify()
     {
@@ -104,7 +113,8 @@ class AuthController extends Controller
         $expires = Session::get('sms_expires');
 
         if ($request->code == $code && now()->lessThan($expires)) {
-            $employee = User::where('phone', $phone)
+            // Same normalization when verifying SMS
+            $employee = User::whereRaw("(case when regexp_replace(phone, '\\\\D', '', 'g') like '998%' then substr(regexp_replace(phone, '\\\\D', '', 'g'), 4) else regexp_replace(phone, '\\\\D', '', 'g') end) = ?", [$phone])
                 ->where('organization_id', $orgId)
                 ->first();
 
