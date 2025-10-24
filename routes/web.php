@@ -113,7 +113,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/menu', [MenuController::class, 'index']);
     Route::get('/menuList', [MenuController::class, 'list']);
 
-    Route::post('/proxy/menu', function (\Illuminate\Http\Request $request) {
+    Route::post('/backm/proxy/menu', function (\Illuminate\Http\Request $request) {
         $sessionId = $request->input('sessionid');
 
         // Agar localda bo'lsa static session ishlatamiz
