@@ -39,7 +39,7 @@
                                     <div class="position-relative">
                                         {{-- 🔥 APP_ENV ga qarab login route tanlash --}}
                                         <form method="POST" 
-                                              action="{{ app()->environment('local') ? url('/login') : url('/backm/login') }}" 
+                                              action="/login" 
                                               id="login-form">
                                             @csrf
                                             <div class="form-floating mb-3">
