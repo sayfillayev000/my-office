@@ -111,19 +111,25 @@ Route::middleware(['auth'])->group(function () {
     // ======================== OTHER ROUTES ========================
 
 
-    Route::post('/proxy/menu', function (\Illuminate\Http\Request $request) {
+       Route::post('/proxy/menu', function (\Illuminate\Http\Request $request) {
         $sessionId = $request->input('sessionid');
+
+        // Agar localda bo'lsa static session ishlatamiz
+        if (app()->environment('local')) {
+            $sessionId = "ryd3wprsupdvp7pkt90srqni3o6fdf6z";
+        }
 
         $response = Http::withHeaders([
             "Content-Type" => "application/json"
         ])->withOptions([
-            "verify" => false
+            "verify" => false // SSL cert error bo'lsa oldini oladi
         ])->post("https://my.synterra.uz/backs/menu/get_list", [
             "sessionid" => $sessionId
         ]);
 
         return response()->json($response->json());
     });
+
 
     Route::get('/applications', [ApplicationController::class, 'index'])->name('applications.index');
     Route::post('/applications/{application}/update', [ApplicationController::class, 'updateStatus'])->name('applications.update');
