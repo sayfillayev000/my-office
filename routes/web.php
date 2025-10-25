@@ -110,21 +110,14 @@ Route::middleware(['auth'])->group(function () {
 
     // ======================== OTHER ROUTES ========================
 
-    Route::get('/menu', [MenuController::class, 'index']);
-    Route::get('/menuList', [MenuController::class, 'list']);
 
     Route::post('/proxy/menu', function (\Illuminate\Http\Request $request) {
         $sessionId = $request->input('sessionid');
 
-        // Agar localda bo'lsa static session ishlatamiz
-        if (app()->environment('local')) {
-            $sessionId = "ryd3wprsupdvp7pkt90srqni3o6fdf6z";
-        }
-
         $response = Http::withHeaders([
             "Content-Type" => "application/json"
         ])->withOptions([
-            "verify" => false // SSL cert error bo'lsa oldini oladi
+            "verify" => false
         ])->post("https://my.synterra.uz/backs/menu/get_list", [
             "sessionid" => $sessionId
         ]);

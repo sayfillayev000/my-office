@@ -4,7 +4,7 @@
     <meta charset="utf-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> 
     <title>SMS Verify - Synterra</title> 
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}"> 
+    <link rel="icon" type="image/png" href="{{ secure_asset('assets/img/favicon.png') }}"> 
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" crossorigin="anonymous">

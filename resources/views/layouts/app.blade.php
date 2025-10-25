@@ -26,11 +26,11 @@
     </style>
 
     <!-- ✅ CSS (Bootstrap + App) -->
-    <link href="{{ asset('assets/libs/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/app.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('assets/js/component/component-smartwizard.js') }}" rel="stylesheet">
 
-    <!-- Page level CSS (optional) -->
-    <link href="{{ asset('assets/css/component-smartwizard.css') }}" rel="stylesheet">
+    <!-- SmartWizard CSS (external) -->
     <link href="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/css/smart_wizard_all.min.css" rel="stylesheet" />
 </head>
 
@@ -590,65 +590,70 @@
                     <!-- Page Level js -->
                      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
     <!-- SmartWizard JS -->
 <script src="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/js/jquery.smartWizard.min.js"></script>
 
-    <script src="{{ asset('assets/js/app.js') }}"></script>
+    <script src="{{ asset('/backs/assets/js/app.js') }}"></script>
     <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const sidebarMenu = document.getElementById("sidebar-menu");
-    const tokenMeta = document.querySelector('meta[name="csrf-token"]');
-    const token = tokenMeta ? tokenMeta.getAttribute('content') : '';
+        document.addEventListener("DOMContentLoaded", () => {
+            const sidebarMenu = document.getElementById("sidebar-menu");
+            const tokenMeta = document.querySelector('meta[name="csrf-token"]');
+            const token = tokenMeta ? tokenMeta.getAttribute('content') : '';
 
-    async function loadMenu() {
-        try {
-            const response = await fetch("/proxy/menu", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": token
-                },
-                credentials: "include"
-            });
-            const data = await response.json();
-            if (!data || Object.keys(data).length === 0) {
-                sidebarMenu.innerHTML = "<li class='nav-item text-danger p-3'>❌ Menu topilmadi</li>";
-                return;
+            async function loadMenu() {
+                try {
+                    const response = await fetch("/proxy/menu", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": token
+                        },
+                        body: JSON.stringify({
+                            sessionid: localStorage.getItem('sessionid')
+                        }),
+                        credentials: "include"
+                    });
+
+                    const data = await response.json();
+                    if (!data || Object.keys(data).length === 0) {
+                        sidebarMenu.innerHTML = "<li class='nav-item text-danger p-3'>❌ Menu topilmadi</li>";
+                        return;
+                    }
+                    renderMenu(data);
+                } catch (error) {
+                    console.error("Menu load error:", error);
+                    sidebarMenu.innerHTML = "<li class='nav-item text-danger p-3'>❌ Xato yuz berdi</li>";
+                }
             }
-            renderMenu(data);
-        } catch (error) {
-            console.error("Menu load error:", error);
-            sidebarMenu.innerHTML = "<li class='nav-item text-danger p-3'>❌ Xato yuz berdi</li>";
-        }
-    }
 
-    function renderMenu(menu) {
-        sidebarMenu.innerHTML = ""; // avvalgi li’larni tozalash
-        Object.values(menu).forEach(m => {
-            const li = document.createElement("li");
-            li.className = "nav-item";
-            li.innerHTML = `
-                <a href="${m.path}" class="nav-link d-flex align-items-center">
-                    <i class="menu-icon me-2">${m.svg_icon || '<i class="bi bi-circle"></i>'}</i>
-                    <span class="menu-name">${m.name}</span>
-                </a>`;
-            sidebarMenu.appendChild(li);
+            function renderMenu(menu) {
+                sidebarMenu.innerHTML = ""; // avvalgi li’larni tozalash
+                Object.values(menu).forEach(m => {
+                    const li = document.createElement("li");
+                    li.className = "nav-item";
+                    li.innerHTML = `
+                        <a href="${m.path}" class="nav-link d-flex align-items-center">
+                            <i class="menu-icon me-2">${m.svg_icon || '<i class="bi bi-circle"></i>'}</i>
+                            <span class="menu-name">${m.name}</span>
+                        </a>`;
+                    sidebarMenu.appendChild(li);
+                });
+
+                // Static tab qo‘shish
+                const staticTab = document.createElement("li");
+                staticTab.className = "nav-item";
+                staticTab.innerHTML = `
+                    <a href="/employees" class="nav-link d-flex align-items-center">
+                        <i class="menu-icon me-2"><i class="bi bi-star"></i></i>
+                        <span class="menu-name">Xodimlar</span>
+                    </a>`;
+                sidebarMenu.appendChild(staticTab);
+            }
+
+            loadMenu();
         });
-
-        // Static tab qo‘shish
-        const staticTab = document.createElement("li");
-        staticTab.className = "nav-item";
-        staticTab.innerHTML = `
-            <a href="/employees" class="nav-link d-flex align-items-center">
-                <i class="menu-icon me-2"><i class="bi bi-star"></i></i>
-                <span class="menu-name">Xodimlar</span>
-            </a>`;
-        sidebarMenu.appendChild(staticTab);
-    }
-
-    loadMenu();
-});
-</script>
+    </script>
     </body>
 
 </html>

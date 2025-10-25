@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class MenyuOrganization extends Model
 {
     protected $table = 'Menyu_organization';
+    public $timestamps = false;
 
     protected $fillable = [
         'name',
