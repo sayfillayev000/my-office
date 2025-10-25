@@ -12,14 +12,6 @@ use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
-    private function baseUrl($path = '')
-    {
-        $prefix = app()->environment('local') ? '' : '/backm';
-        return app()->environment('local') 
-            ? url($prefix . $path)
-            : secure_url($prefix . $path);
-    }
-
 
     public function showLogin()
     {
@@ -65,7 +57,7 @@ class AuthController extends Controller
             'code' => $code
         ]);
     
-        return redirect()->to($this->baseUrl('/sms-verify'))
+        return redirect()->to('/sms-verify')
             ->with('status', 'SMS kod yuborildi!')
             ->with('code', $code);
     }
@@ -74,7 +66,7 @@ class AuthController extends Controller
     public function showSmsVerify()
     {
         if (!Session::has('phone')) {
-            return redirect()->to($this->baseUrl('/login'));
+            return redirect()->to('/login');
         }
         return view('pages.sms_verify');
     }
@@ -84,7 +76,7 @@ class AuthController extends Controller
         $phone = Session::get('phone');
 
         if (!$phone) {
-            return redirect()->to($this->baseUrl('/login'))
+            return redirect()->to('/login')
                 ->withErrors(['phone' => 'Avval login qiling!']);
         }
 
@@ -133,7 +125,7 @@ class AuthController extends Controller
 
             Session::forget(['sms_code', 'sms_expires']);
 
-            return redirect()->to($this->baseUrl('/dashboard'));
+            return redirect()->to('/dashboard');
         }
 
         return back()->withErrors(['code' => 'Kod noto‘g‘ri yoki muddati tugagan!']);

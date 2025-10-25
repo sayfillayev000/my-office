@@ -35,7 +35,7 @@
             @endif
             <p class="text-muted">Telefon raqamingizga yuborilgan 4 xonali kodni kiriting</p>
 
-            <form method="POST" action="{{ app()->environment('local') ? url('/sms-verify') : secure_url('/backm/sms-verify') }}">
+            <form method="POST" action="/sms-verify">
                 @csrf
                 <div class="form-floating mb-3">
                     <input type="text" 
@@ -53,7 +53,7 @@
 
             <div>
                 <small class="text-muted">Kodni olmadingizmi?</small><br>
-                <form method="POST" action="{{ app()->environment('local') ? url('/sms-resend') : secure_url('/backm/sms-resend') }}">
+                <form method="POST" action="/sms-resend">
                     @csrf
                     <button type="submit" class="btn btn-link p-0">Qayta yuborish</button>
                 </form>

@@ -39,8 +39,8 @@
                                     <div class="position-relative">
                                         {{-- 🔥 APP_ENV ga qarab login route tanlash --}}
                                         <form method="POST" 
-                                            action="{{ app()->environment('local') ? url('/login') : secure_url('/backm/login') }}" 
-                                            id="login-form">
+                                              action="/login" 
+                                              id="login-form">
                                             @csrf
                                             <div class="form-floating mb-3">
                                                 <input type="text" 
