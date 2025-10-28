@@ -128,7 +128,7 @@ class AuthController extends Controller
             if(app()->environment('local')) {
                 return redirect()->to('/dashboard');
             } else {
-                return redirect()->to('/backs/user/profile');
+                return redirect()->to('/dashboard');
             }
         }
 

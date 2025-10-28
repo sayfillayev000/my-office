@@ -20,6 +20,7 @@ class SeedPermissions extends Command
     {
         // 1️⃣ Barcha permissionlarni aniqlaymiz
         $permissions = [
+            'dashboard.view',
             'custom-tab.view',
             'employee.view',
             'employee.edit',

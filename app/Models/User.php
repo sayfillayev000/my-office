@@ -6,14 +6,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Permission\Traits\HasRoles;
-
+use Spatie\Permission\Models\Role;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasRoles;
 
     protected $table = 'Menyu_employee';
-    public $timestamps = false;
+    protected $guard_name = 'web';
+    public $timestamps = true; // Spatie table-ga yozuvlar uchun true qilamiz
 
     protected $fillable = [
         'first_name',
@@ -65,6 +66,7 @@ class User extends Authenticatable
         'door_schedule_ids',
         'passport_file_path'
     ];
+
     protected $hidden = [
         'password',
         'remember_token',
@@ -96,13 +98,13 @@ class User extends Authenticatable
     }
 
     /*
-     * Bir nechta organization bilan ko‘p-ko‘p aloqasi
+     * Bir nechta organization bilan ko‘p-ko‘p aloqasi (pivot orqali role_id saqlanadi)
      */
     public function organizations()
     {
         return $this->belongsToMany(
             MenyuOrganization::class,
-            'organization_user_role',
+            'organization_role',
             'user_id',
             'organization_id'
         )->withPivot('role_id')->withTimestamps();
@@ -116,13 +118,43 @@ class User extends Authenticatable
         return $this->organizations()
                     ->wherePivot('organization_id', $orgId)
                     ->get()
-                    ->map(fn($org) => \Spatie\Permission\Models\Role::find($org->pivot->role_id));
+                    ->map(fn($org) => Role::find($org->pivot->role_id));
     }
 
     /*
-     * ========== Relational aloqalar ==========
+     * Spatie roles bilan bog‘lash va biriktirish
      */
+    public function assignRoleToEmployee(Role $role): bool
+    {
+        try {
+            // Spatie table-ga yoziladi
+            $this->assignRole($role->name);
 
+            // Cache tozalash
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+            return true;
+        } catch (\Exception $e) {
+            \Log::error('Role assignment failed', [
+                'error' => $e->getMessage(),
+                'role_id' => $role->id,
+                'employee_id' => $this->id,
+            ]);
+            return false;
+        }
+    }
+
+    /*
+     * Cache tozalash
+     */
+    public function clearPermissionCache()
+    {
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    }
+
+    /*
+     * ========= Relational aloqalar ==========
+     */
     public function educations()
     {
         return $this->hasMany(MenyuEducation::class, 'employee_id');
@@ -152,5 +184,4 @@ class User extends Authenticatable
     {
         return $this->hasOne(MenyuEmployeeadditionalinfo::class, 'employee_id');
     }
-    
 }
