@@ -125,7 +125,11 @@ class AuthController extends Controller
 
             Session::forget(['sms_code', 'sms_expires']);
 
-            return redirect()->to('/dashboard');
+            if(app()->environment('local')) {
+                return redirect()->to('/dashboard');
+            } else {
+                return redirect()->to('/backs/user/profile');
+            }
         }
 
         return back()->withErrors(['code' => 'Kod noto‘g‘ri yoki muddati tugagan!']);
