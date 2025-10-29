@@ -6,9 +6,17 @@ use App\Models\EmployeeReason;
 use App\Models\EmployeeReasonItem;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ReasonController extends Controller
 {
+    /**
+     * Reasons management page (sidebar -> Sabablar)
+     */
+    public function managePage()
+    {
+        return view('pages.reasons.index');
+    }
     /**
      * Get all active reasons
      */
@@ -32,6 +40,30 @@ class ReasonController extends Controller
     }
 
     /**
+     * Get single employee reason item
+     */
+    public function getEmployeeReasonItem($id)
+    {
+        try {
+            $item = EmployeeReasonItem::with('reason')->find($id);
+            
+            if (!$item) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sabab topilmadi'
+                ], 404);
+            }
+            
+            return response()->json($item);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Store employee reason item
      */
     public function storeEmployeeReasonItem(Request $request)
@@ -44,10 +76,14 @@ class ReasonController extends Controller
             'end_date' => 'required_if:type,daily|nullable|date',
             'start_datetime' => 'required_if:type,hourly|nullable|date',
             'end_datetime' => 'required_if:type,hourly|nullable|date',
-            'comment' => 'nullable|string|max:1000'
+            'comment' => 'nullable|string|max:1000',
+            'status' => 'nullable|in:ongoing,completed'
         ]);
 
         try {
+            if (!isset($validated['status'])) {
+                $validated['status'] = 'ongoing';
+            }
             EmployeeReasonItem::create($validated);
             
             return response()->json([
@@ -63,12 +99,66 @@ class ReasonController extends Controller
     }
 
     /**
+     * Update employee reason item
+     */
+    public function updateEmployeeReasonItem(Request $request, $id)
+    {
+        try {
+            $item = EmployeeReasonItem::find($id);
+            
+            if (!$item) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sabab topilmadi'
+                ], 404);
+            }
+
+            $validated = $request->validate([
+                'reason_id' => 'sometimes|exists:employee_reasons,id',
+                'type' => 'sometimes|in:daily,hourly',
+                'start_date' => 'required_if:type,daily|nullable|date',
+                'end_date' => 'required_if:type,daily|nullable|date',
+                'start_datetime' => 'required_if:type,hourly|nullable|date',
+                'end_datetime' => 'required_if:type,hourly|nullable|date',
+                'comment' => 'nullable|string|max:1000',
+                'status' => 'nullable|in:ongoing,completed'
+            ]);
+
+            $item->update($validated);
+            return response()->json([
+                'success' => true, 
+                'message' => 'Sabab yangilandi',
+                'data' => $item->fresh('reason')
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation xatolik',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Delete employee reason item
      */
     public function deleteEmployeeReasonItem($id)
     {
         try {
-            $item = EmployeeReasonItem::findOrFail($id);
+            $item = EmployeeReasonItem::find($id);
+            
+            if (!$item) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sabab topilmadi'
+                ], 404);
+            }
+            
             $item->delete();
             
             return response()->json([

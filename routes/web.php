@@ -137,7 +137,11 @@ Route::middleware(['auth'])->group(function () {
 
     // ======================== REASON ROUTES ========================
     
-    // Reasons management (for admin)
+    // Reasons management page
+    Route::get('/reasons', [ReasonController::class, 'managePage'])
+        ->name('reasons.index');
+
+    // Reasons management (API)
     Route::get('/employee-reasons', [ReasonController::class, 'getReasons'])
         ->name('employee.reasons.get');
     Route::get('/employee-reasons/{id}', [ReasonController::class, 'getReason'])
@@ -150,10 +154,16 @@ Route::middleware(['auth'])->group(function () {
         ->name('employee.reasons.destroy');
     
     // Employee reason items
+    // More specific route first to avoid conflicts
+    Route::get('/employee-reason-item/{id}', [ReasonController::class, 'getEmployeeReasonItem'])
+        ->name('employee.reason-item.get');
     Route::get('/employee-reason-items/{employeeId}', [ReasonController::class, 'getEmployeeReasonItems'])
+        ->where('employeeId', '[0-9]+')
         ->name('employee.reason-items.get');
     Route::post('/employee-reason-items', [ReasonController::class, 'storeEmployeeReasonItem'])
         ->name('employee.reason-items.store');
+    Route::put('/employee-reason-items/{id}', [ReasonController::class, 'updateEmployeeReasonItem'])
+        ->name('employee.reason-items.update');
     Route::delete('/employee-reason-items/{id}', [ReasonController::class, 'deleteEmployeeReasonItem'])
         ->name('employee.reason-items.delete');
 });
