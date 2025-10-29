@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\ReasonController;
 
 // Authentication routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -111,8 +112,13 @@ Route::middleware(['auth'])->group(function () {
     // ======================== OTHER ROUTES ========================
 
 
-    Route::post('/proxy/menu', function (\Illuminate\Http\Request $request) {
+       Route::post('/proxy/menu', function (\Illuminate\Http\Request $request) {
         $sessionId = $request->input('sessionid');
+
+        // Agar localda bo'lsa static session ishlatamiz
+        if (app()->environment('local')) {
+            $sessionId = "ryd3wprsupdvp7pkt90srqni3o6fdf6z";
+        }
 
         $response = Http::withHeaders([
             "Content-Type" => "application/json"
@@ -126,6 +132,39 @@ Route::middleware(['auth'])->group(function () {
         return response()->json($response->json());
     });
 
+
     Route::get('/applications', [ApplicationController::class, 'index'])->name('applications.index');
     Route::post('/applications/{application}/update', [ApplicationController::class, 'updateStatus'])->name('applications.update');
+
+    // ======================== REASON ROUTES ========================
+    
+    // Reasons management page
+    Route::get('/reasons', [ReasonController::class, 'managePage'])
+        ->name('reasons.index');
+
+    // Reasons management (API)
+    Route::get('/employee-reasons', [ReasonController::class, 'getReasons'])
+        ->name('employee.reasons.get');
+    Route::get('/employee-reasons/{id}', [ReasonController::class, 'getReason'])
+        ->name('employee.reasons.show');
+    Route::post('/employee-reasons', [ReasonController::class, 'store'])
+        ->name('employee.reasons.store');
+    Route::put('/employee-reasons/{id}', [ReasonController::class, 'update'])
+        ->name('employee.reasons.update');
+    Route::delete('/employee-reasons/{id}', [ReasonController::class, 'destroy'])
+        ->name('employee.reasons.destroy');
+    
+    // Employee reason items
+    // More specific route first to avoid conflicts
+    Route::get('/employee-reason-item/{id}', [ReasonController::class, 'getEmployeeReasonItem'])
+        ->name('employee.reason-item.get');
+    Route::get('/employee-reason-items/{employeeId}', [ReasonController::class, 'getEmployeeReasonItems'])
+        ->where('employeeId', '[0-9]+')
+        ->name('employee.reason-items.get');
+    Route::post('/employee-reason-items', [ReasonController::class, 'storeEmployeeReasonItem'])
+        ->name('employee.reason-items.store');
+    Route::put('/employee-reason-items/{id}', [ReasonController::class, 'updateEmployeeReasonItem'])
+        ->name('employee.reason-items.update');
+    Route::delete('/employee-reason-items/{id}', [ReasonController::class, 'deleteEmployeeReasonItem'])
+        ->name('employee.reason-items.delete');
 });

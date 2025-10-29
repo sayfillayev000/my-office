@@ -45,6 +45,14 @@
                     </div>
                 </button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="step-6-tab" data-bs-toggle="tab" data-bs-target="#step-6" type="button" role="tab" aria-controls="step-6" aria-selected="false" tabindex="-1">
+                    <div class="p-1">
+                        <p class="h6 mb-0">Sabablar</p>
+                        <p class="opacity-75 small">Boshqarish</p>
+                    </div>
+                </button>
+            </li>
         </ul>
 
         <div class="card-body">
@@ -616,7 +624,7 @@
                 {{-- Tugash sanasi yoki kurs --}}
                 <td>
                     @if($education->degree_type === 'Tugallanmagan oliy')
-                        {{ $education->course ? $education->course . '-kurs' : 'O‘qimoqda' }}
+                        {{ $education->course ? $education->course . '-kurs' : 'O&#39;qimoqda' }}
                     @else
                         {{ $education->end_date ? \Carbon\Carbon::parse($education->end_date)->format('d.m.Y') : '' }}
                     @endif
@@ -1317,6 +1325,221 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Step 6: Xodimning Sabablari -->
+                <div id="step-6" class="tab-pane fade">
+                    <div class="card border-0 mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0 text-primary">
+                                <i class="bi bi-flag me-2"></i>{{ $employee->last_name }} {{ $employee->first_name }} — Sabablar
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <p class="h6 py-2 mb-0">Sabablar ro'yxati</p>
+                                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addUserReasonModal">
+                                    <i class="bi bi-plus-circle"></i> Sabab qo'shish
+                                </button>
+                            </div>
+                            
+                            <!-- Jadval ko'rinishi -->
+                            <div class="table-responsive mb-4">
+                                <table class="table w-100 nowrap dataTable dtr-inline collapsed" id="employeeReasonsTable" aria-describedby="employeeReasonsTable_info">
+                                    <colgroup>
+                                        <col data-dt-column="0">
+                                        <col data-dt-column="1">
+                                        <col data-dt-column="2">
+                                        <col data-dt-column="3">
+                                        <col data-dt-column="4">
+                                        <col data-dt-column="5">
+                                    </colgroup>
+                                    <thead>
+                                        <tr role="row">
+                                            <th data-dt-column="0" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc">
+                                                <span class="dt-column-title">Turi</span>
+                                            </th>
+                                            <th data-breakpoints="xs sm" data-dt-column="1" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc">
+                                                <span class="dt-column-title">Davr</span>
+                                            </th>
+                                            <th data-breakpoints="xs sm" data-dt-column="2" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc">
+                                                <span class="dt-column-title">Sabab</span>
+                                            </th>
+                                            <th data-breakpoints="xs sm" data-dt-column="3" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc">
+                                                <span class="dt-column-title">Holati</span>
+                                            </th>
+                                            <th data-breakpoints="xs sm md" data-dt-column="4" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc">
+                                                <span class="dt-column-title">Kommentariya</span>
+                                            </th>
+                                            <th class="all dt-orderable-none" data-dt-column="5" rowspan="1" colspan="1">
+                                                <span class="dt-column-title">Harakatlar</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="employeeReasonsTableBody">
+                                        <tr>
+                                            <td colspan="6" class="text-center py-5">
+                                                <div class="spinner-border text-primary" role="status">
+                                                    <span class="visually-hidden">Yuklanmoqda...</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Xodim sabab qo'shish modal -->
+<div class="modal fade" id="addUserReasonModal" tabindex="-1" aria-labelledby="addUserReasonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserReasonModalLabel">Sabab qo'shish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addEmployeeReasonForm">
+                    <input type="hidden" name="employee_id" value="{{ $employee->id }}">
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Sabab</label>
+                        <select name="reason_id" id="modal_reason_id" class="form-select" required></select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Turi</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="reason_type" id="modal_reason_type_daily" value="daily" checked onchange="toggleUserReasonType()">
+                                <label class="form-check-label" for="modal_reason_type_daily">Kunlik</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="reason_type" id="modal_reason_type_hourly" value="hourly" onchange="toggleUserReasonType()">
+                                <label class="form-check-label" for="modal_reason_type_hourly">Soatlik</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="user-daily-fields">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Boshlanish sanasi</label>
+                                <input type="date" name="start_date" id="modal_start_date" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Tugash sanasi</label>
+                                <input type="date" name="end_date" id="modal_end_date" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="user-hourly-fields" style="display:none;">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Boshlanish</label>
+                                <input type="datetime-local" name="start_datetime" id="modal_start_datetime" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Tugash</label>
+                                <input type="datetime-local" name="end_datetime" id="modal_end_datetime" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Kommentariya</label>
+                        <textarea name="comment" id="modal_reason_comment" class="form-control" rows="3" placeholder="Qo'shimcha izoh..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                <button type="button" class="btn btn-primary" onclick="saveEmployeeReason()">Saqlash</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit employee reason modal -->
+<div class="modal fade" id="editUserReasonModal" tabindex="-1" aria-labelledby="editUserReasonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserReasonModalLabel">Sababni tahrirlash</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editEmployeeReasonForm">
+                    <input type="hidden" name="edit_reason_item_id" id="edit_reason_item_id">
+                    <input type="hidden" name="employee_id" value="{{ $employee->id }}">
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Sabab</label>
+                        <select name="reason_id" id="edit_modal_reason_id" class="form-select" required></select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Turi</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="reason_type" id="edit_modal_reason_type_daily" value="daily" onchange="toggleEditUserReasonType()">
+                                <label class="form-check-label" for="edit_modal_reason_type_daily">Kunlik</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="reason_type" id="edit_modal_reason_type_hourly" value="hourly" onchange="toggleEditUserReasonType()">
+                                <label class="form-check-label" for="edit_modal_reason_type_hourly">Soatlik</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="edit-user-daily-fields">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Boshlanish sanasi</label>
+                                <input type="date" name="start_date" id="edit_modal_start_date" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Tugash sanasi</label>
+                                <input type="date" name="end_date" id="edit_modal_end_date" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="edit-user-hourly-fields" style="display:none;">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Boshlanish</label>
+                                <input type="datetime-local" name="start_datetime" id="edit_modal_start_datetime" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Tugash</label>
+                                <input type="datetime-local" name="end_datetime" id="edit_modal_end_datetime" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Holati</label>
+                        <select name="status" id="edit_modal_reason_status" class="form-select">
+                            <option value="ongoing">Davom etmoqda</option>
+                            <option value="completed">Tugallangan</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Kommentariya</label>
+                        <textarea name="comment" id="edit_modal_reason_comment" class="form-control" rows="3" placeholder="Qo'shimcha izoh..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                <button type="button" class="btn btn-primary" onclick="updateEmployeeReason()">Saqlash</button>
             </div>
         </div>
     </div>
@@ -3947,8 +4170,566 @@
                     ]
                 });
             }
+
+            // Load reasons when step-6 is clicked
+            document.getElementById('step-6-tab').addEventListener('shown.bs.tab', function() {
+                loadReasons();
+            });
+
+            // Reason form submit
+            document.getElementById('reasonForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveReason();
+            });
         });
-        </script>
+
+        // Load reasons list
+        function loadReasons() {
+            const container = document.getElementById('reasonsList');
+            container.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yuklanmoqda...</span></div></div>';
+            
+            fetch('/employee-reasons')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        container.innerHTML = '<div class="text-center py-4 text-muted">Sabablar mavjud emas</div>';
+                        return;
+                    }
+                    
+                    let html = '';
+                    data.forEach(reason => {
+                        const colorStyle = reason.color ? `background-color: ${reason.color}` : '';
+                        html += `
+                            <div class="list-group-item d-flex justify-content-between align-items-start" data-id="${reason.id}">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold d-flex align-items-center">
+                                        <span class="badge me-2" style="${colorStyle}">&nbsp;&nbsp;&nbsp;</span>
+                                        ${reason.name}
+                                    </div>
+                                    <small class="text-muted">${reason.description || 'Tavsif yo\'q'}</small>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary me-1" onclick="editReason(${reason.id})">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteReason(${reason.id})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error loading reasons:', error);
+                    container.innerHTML = '<div class="text-center py-4 text-danger">Xatolik yuz berdi</div>';
+                });
+        }
+
+        // Save reason
+        function saveReason() {
+            const formData = new FormData(document.getElementById('reasonForm'));
+            const data = {
+                name: formData.get('name'),
+                color: formData.get('color'),
+                description: formData.get('description'),
+                is_active: formData.get('is_active') === 'on'
+            };
+            
+            const reasonId = formData.get('reason_id');
+            const url = reasonId ? `/employee-reasons/${reasonId}` : '/employee-reasons';
+            const method = reasonId ? 'PUT' : 'POST';
+            
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Muvaffaqiyatli saqlandi!');
+                    resetReasonForm();
+                    loadReasons();
+                } else {
+                    alert('Xatolik: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Xatolik yuz berdi!');
+            });
+        }
+
+        // Edit reason
+        function editReason(id) {
+            fetch(`/employee-reasons/${id}`)
+                .then(response => response.json())
+                .then(reason => {
+                    document.getElementById('reason_id').value = reason.id;
+                    document.getElementById('reason_name').value = reason.name;
+                    document.getElementById('reason_color').value = reason.color || '#667eea';
+                    document.getElementById('reason_description').value = reason.description || '';
+                    document.getElementById('reason_is_active').checked = reason.is_active;
+                })
+                .catch(error => {
+                    console.error('Error loading reason:', error);
+                    alert('Xatolik yuz berdi!');
+                });
+        }
+
+        // Delete reason
+        function deleteReason(id) {
+            if (!confirm('Haqiqatan ham o\'chirmoqchimisiz?')) return;
+            
+            fetch(`/employee-reasons/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('O\'chirildi!');
+                    loadReasons();
+                } else {
+                    alert('Xatolik: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Xatolik yuz berdi!');
+            });
+        }
+
+        // Reset reason form
+        function resetReasonForm() {
+            document.getElementById('reasonForm').reset();
+            document.getElementById('reason_id').value = '';
+            document.getElementById('reason_color').value = '#667eea';
+            document.getElementById('reason_is_active').checked = true;
+        }
+
+            // Load employee reasons when step-6 is clicked
+            document.getElementById('step-6-tab').addEventListener('shown.bs.tab', function() {
+                loadEmployeeReasons({{ $employee->id }});
+                loadModalReasonsOptions();
+            });
+
+            // Reset add modal form when closed
+            document.getElementById('addUserReasonModal').addEventListener('hidden.bs.modal', function() {
+                const form = document.getElementById('addEmployeeReasonForm');
+                if (form) {
+                    form.reset();
+                    document.getElementById('user-daily-fields').style.display = 'block';
+                    document.getElementById('user-hourly-fields').style.display = 'none';
+                    document.getElementById('modal_reason_type_daily').checked = true;
+                }
+            });
+
+            // Reset edit modal form when closed
+            document.getElementById('editUserReasonModal').addEventListener('hidden.bs.modal', function() {
+                const form = document.getElementById('editEmployeeReasonForm');
+                if (form) {
+                    form.reset();
+                    document.getElementById('edit_reason_item_id').value = '';
+                    document.getElementById('edit-user-daily-fields').style.display = 'block';
+                    document.getElementById('edit-user-hourly-fields').style.display = 'none';
+                    document.getElementById('edit_modal_reason_type_daily').checked = true;
+                }
+            });
+
+        // Load employee reasons list
+        function loadEmployeeReasons(employeeId) {
+            const tbody = document.getElementById('employeeReasonsTableBody');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yuklanmoqda...</span></div></td></tr>';
+            
+            fetch(`/employee-reason-items/${employeeId}`)
+                .then(r => r.json())
+                .then(items => {
+                    if (!items.length) {
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Sabablar mavjud emas</td></tr>';
+                        // Destroy existing DataTable if exists
+                        if ($.fn.DataTable.isDataTable('#employeeReasonsTable')) {
+                            $('#employeeReasonsTable').DataTable().destroy();
+                        }
+                        return;
+                    }
+                    
+                    let html = '';
+                    items.forEach(it => {
+                        const typeBadge = it.type === 'daily' ? '<span class="badge bg-info">Kunlik</span>' : '<span class="badge bg-warning text-dark">Soatlik</span>';
+                        const statusBadge = it.status === 'ongoing' ? '<span class="badge bg-success">Davom etmoqda</span>' : '<span class="badge bg-secondary">Tugallangan</span>';
+                        const period = it.type === 'daily' ?
+                            (it.start_date ? new Date(it.start_date).toLocaleDateString('uz-UZ') : '') + 
+                            (it.end_date ? ' — ' + new Date(it.end_date).toLocaleDateString('uz-UZ') : '') :
+                            (it.start_datetime ? new Date(it.start_datetime).toLocaleString('uz-UZ') : '') + 
+                            (it.end_datetime ? ' — ' + new Date(it.end_datetime).toLocaleString('uz-UZ') : '');
+                        const reasonName = it.reason ? it.reason.name : '-';
+                        const reasonColor = it.reason && it.reason.color ? it.reason.color : '#667eea';
+                        const editBtn = it.status === 'ongoing' ? 
+                            `<a href="javascript:void(0)" class="btn btn-square btn-link" onclick="editEmployeeReasonItem(${it.id})" title="Tahrirlash">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>` : '';
+                        const comment = it.comment ? (it.comment.length > 50 ? it.comment.substring(0, 50) + '...' : it.comment) : '-';
+                        
+                        html += `<tr data-id="${it.id}">
+                            <td class="dtr-control" tabindex="0">${typeBadge}</td>
+                            <td>${period || '-'}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge me-2" style="background-color: ${reasonColor}">&nbsp;&nbsp;&nbsp;</span>
+                                    <span>${reasonName}</span>
+                                </div>
+                            </td>
+                            <td>${statusBadge}</td>
+                            <td>${comment}</td>
+                            <td>
+                                ${editBtn}
+                                <button type="button" class="btn btn-square btn-link text-danger" onclick="deleteEmployeeReason(${it.id}, ${employeeId})" title="O'chirish">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>`;
+                    });
+                    tbody.innerHTML = html;
+                    
+                    // Initialize DataTable if not already initialized
+                    if (!$.fn.DataTable.isDataTable('#employeeReasonsTable')) {
+                        $('#employeeReasonsTable').DataTable({
+                            responsive: true,
+                            searching: false,
+                            paging: false,
+                            info: false,
+                            lengthChange: false,
+                            columnDefs: [
+                                { orderable: false, targets: -1 }
+                            ]
+                        });
+                    } else {
+                        $('#employeeReasonsTable').DataTable().draw();
+                    }
+                })
+                .catch(() => {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-danger">Xatolik yuz berdi</td></tr>';
+                });
+        }
+
+        function loadModalReasonsOptions(editMode = false) {
+            // Load for add modal
+            if (!editMode) {
+                const select = document.getElementById('modal_reason_id');
+                if (select) {
+                    select.innerHTML = '<option value="">Yuklanmoqda...</option>';
+                    fetch('/employee-reasons')
+                        .then(r => r.json())
+                        .then(data => {
+                            select.innerHTML = '<option value="">Sababni tanlang...</option>';
+                            data.forEach(r => {
+                                const opt = document.createElement('option');
+                                opt.value = r.id;
+                                opt.textContent = r.name;
+                                select.appendChild(opt);
+                            });
+                        })
+                        .catch(() => {
+                            select.innerHTML = '<option value="">Xatolik</option>';
+                        });
+                }
+            }
+            
+            // Load for edit modal
+            const editSelect = document.getElementById('edit_modal_reason_id');
+            if (editSelect) {
+                // Check if options already loaded (has options with values)
+                const hasOptions = editSelect.querySelectorAll('option').length > 1 || 
+                                   Array.from(editSelect.querySelectorAll('option')).some(opt => opt.value && opt.value !== '');
+                
+                if (!hasOptions) {
+                    editSelect.innerHTML = '<option value="">Yuklanmoqda...</option>';
+                    fetch('/employee-reasons')
+                        .then(r => r.json())
+                        .then(data => {
+                            editSelect.innerHTML = '<option value="">Sababni tanlang...</option>';
+                            data.forEach(r => {
+                                const opt = document.createElement('option');
+                                opt.value = r.id;
+                                opt.textContent = r.name;
+                                editSelect.appendChild(opt);
+                            });
+                        })
+                        .catch(() => {
+                            editSelect.innerHTML = '<option value="">Xatolik</option>';
+                        });
+                }
+            }
+        }
+
+        function toggleUserReasonType() {
+            const daily = document.getElementById('modal_reason_type_daily').checked;
+            document.getElementById('user-daily-fields').style.display = daily ? 'block' : 'none';
+            document.getElementById('user-hourly-fields').style.display = daily ? 'none' : 'block';
+        }
+
+        function saveEmployeeReason() {
+            const form = document.getElementById('addEmployeeReasonForm');
+            const formData = new FormData(form);
+            const data = {
+                employee_id: formData.get('employee_id'),
+                reason_id: formData.get('reason_id'),
+                type: formData.get('reason_type'),
+                comment: formData.get('comment')
+            };
+            if (data.type === 'daily') {
+                data.start_date = formData.get('start_date');
+                data.end_date = formData.get('end_date');
+            } else {
+                data.start_datetime = formData.get('start_datetime');
+                data.end_datetime = formData.get('end_datetime');
+            }
+            fetch('/employee-reason-items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('addUserReasonModal')).hide();
+                    form.reset();
+                    toggleUserReasonType();
+                    loadEmployeeReasons({{ $employee->id }});
+                } else {
+                    alert('Xatolik: ' + (res.message || 'Noma\'lum xatolik'));
+                }
+            })
+            .catch(() => alert('Xatolik yuz berdi!'));
+        }
+
+        function deleteEmployeeReason(id, employeeId) {
+            if (!confirm('Haqiqatan ham o\'chirmoqchimisiz?')) return;
+            fetch(`/employee-reason-items/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    loadEmployeeReasons(employeeId);
+                } else {
+                    alert('Xatolik: ' + (res.message || 'Noma\'lum xatolik'));
+                }
+            })
+            .catch(() => alert('Xatolik yuz berdi!'));
+        }
+
+        function editEmployeeReasonItem(id) {
+            if (!id) {
+                alert('Xatolik: Sabab ID topilmadi');
+                return;
+            }
+            
+            // Close add modal if open
+            const addModal = bootstrap.Modal.getInstance(document.getElementById('addUserReasonModal'));
+            if (addModal) {
+                addModal.hide();
+            }
+            
+            // Load reasons for edit modal
+            loadModalReasonsOptions(true);
+            
+            // Wait a bit for reasons to load, then fetch item data
+            setTimeout(() => {
+                fetch(`/employee-reason-item/${id}`)
+                    .then(r => {
+                        if (!r.ok) {
+                            return r.json().then(err => {
+                                throw new Error(err.message || 'Ma\'lumot yuklashda xatolik');
+                            });
+                        }
+                        return r.json();
+                    })
+                    .then(item => {
+                        if (!item || item.success === false) {
+                            throw new Error(item.message || 'Sabab topilmadi');
+                        }
+                        
+                        // Fill form fields
+                        document.getElementById('edit_reason_item_id').value = item.id;
+                        document.getElementById('edit_modal_reason_status').value = item.status || 'ongoing';
+                        document.getElementById('edit_modal_reason_comment').value = item.comment || '';
+                        
+                        // Format dates properly
+                        let startDate = '';
+                        let endDate = '';
+                        let startDateTime = '';
+                        let endDateTime = '';
+                        
+                        if (item.type === 'daily') {
+                            if (item.start_date) {
+                                const sd = new Date(item.start_date);
+                                if (!isNaN(sd.getTime())) {
+                                    startDate = sd.toISOString().split('T')[0];
+                                }
+                            }
+                            if (item.end_date) {
+                                const ed = new Date(item.end_date);
+                                if (!isNaN(ed.getTime())) {
+                                    endDate = ed.toISOString().split('T')[0];
+                                }
+                            }
+                            document.getElementById('edit_modal_reason_type_daily').checked = true;
+                            document.getElementById('edit_modal_start_date').value = startDate;
+                            document.getElementById('edit_modal_end_date').value = endDate;
+                            document.getElementById('edit-user-daily-fields').style.display = 'block';
+                            document.getElementById('edit-user-hourly-fields').style.display = 'none';
+                        } else {
+                            if (item.start_datetime) {
+                                const sdt = new Date(item.start_datetime);
+                                if (!isNaN(sdt.getTime())) {
+                                    startDateTime = sdt.toISOString().slice(0, 16);
+                                }
+                            }
+                            if (item.end_datetime) {
+                                const edt = new Date(item.end_datetime);
+                                if (!isNaN(edt.getTime())) {
+                                    endDateTime = edt.toISOString().slice(0, 16);
+                                }
+                            }
+                            document.getElementById('edit_modal_reason_type_hourly').checked = true;
+                            document.getElementById('edit_modal_start_datetime').value = startDateTime;
+                            document.getElementById('edit_modal_end_datetime').value = endDateTime;
+                            document.getElementById('edit-user-daily-fields').style.display = 'none';
+                            document.getElementById('edit-user-hourly-fields').style.display = 'block';
+                        }
+                        
+                        // Set reason dropdown value - wait a bit more if still loading
+                        const editSelect = document.getElementById('edit_modal_reason_id');
+                        if (editSelect) {
+                            if (editSelect.options.length > 1) {
+                                editSelect.value = item.reason_id;
+                            } else {
+                                // Wait for options to load
+                                setTimeout(() => {
+                                    editSelect.value = item.reason_id;
+                                }, 300);
+                            }
+                        }
+                        
+                        // Show edit modal
+                        const editModal = new bootstrap.Modal(document.getElementById('editUserReasonModal'));
+                        editModal.show();
+                    })
+                    .catch(error => {
+                        console.error('Error loading reason item:', error);
+                        alert('Xatolik: ' + (error.message || 'Ma\'lumotlarni yuklashda xatolik yuz berdi'));
+                    });
+            }, 200);
+        }
+
+        function toggleEditUserReasonType() {
+            const daily = document.getElementById('edit_modal_reason_type_daily').checked;
+            document.getElementById('edit-user-daily-fields').style.display = daily ? 'block' : 'none';
+            document.getElementById('edit-user-hourly-fields').style.display = daily ? 'none' : 'block';
+        }
+
+        function updateEmployeeReason() {
+            const form = document.getElementById('editEmployeeReasonForm');
+            const formData = new FormData(form);
+            const itemId = document.getElementById('edit_reason_item_id').value;
+            
+            if (!itemId) {
+                alert('Xatolik: Sabab ID topilmadi');
+                return;
+            }
+            
+            const data = {
+                reason_id: formData.get('reason_id'),
+                type: formData.get('reason_type'),
+                comment: formData.get('comment'),
+                status: formData.get('status') || 'ongoing'
+            };
+            
+            // Add dates based on type
+            if (data.type === 'daily') {
+                const startDate = formData.get('start_date');
+                const endDate = formData.get('end_date');
+                if (!startDate || !endDate) {
+                    alert('Iltimos, sanalarni to\'ldiring!');
+                    return;
+                }
+                data.start_date = startDate;
+                data.end_date = endDate;
+                // Clear datetime fields
+                data.start_datetime = null;
+                data.end_datetime = null;
+            } else {
+                const startDatetime = formData.get('start_datetime');
+                const endDatetime = formData.get('end_datetime');
+                if (!startDatetime || !endDatetime) {
+                    alert('Iltimos, vaqtlarni to\'ldiring!');
+                    return;
+                }
+                data.start_datetime = startDatetime;
+                data.end_datetime = endDatetime;
+                // Clear date fields
+                data.start_date = null;
+                data.end_date = null;
+            }
+            
+            fetch(`/employee-reason-items/${itemId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(async r => {
+                const responseData = await r.json();
+                if (!r.ok) {
+                    throw responseData;
+                }
+                return responseData;
+            })
+            .then(res => {
+                if (res.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('editUserReasonModal')).hide();
+                    form.reset();
+                    loadEmployeeReasons({{ $employee->id }});
+                    // Optional: Show success message
+                    // alert('Sabab muvaffaqiyatli yangilandi!');
+                } else {
+                    throw new Error(res.message || 'Noma\'lum xatolik');
+                }
+            })
+            .catch(error => {
+                console.error('Update error:', error);
+                let errorMsg = 'Xatolik yuz berdi';
+                
+                if (error.message) {
+                    errorMsg = error.message;
+                } else if (error.errors) {
+                    errorMsg = Object.values(error.errors).flat().join(', ');
+                } else if (typeof error === 'object') {
+                    errorMsg = error.message || JSON.stringify(error);
+                }
+                
+                alert('Xatolik: ' + errorMsg);
+            });
+        }
+</script>
         </div>
     </div>
 </div>
