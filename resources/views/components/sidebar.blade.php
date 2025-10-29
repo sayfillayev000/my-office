@@ -91,24 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
       sidebarMenu.appendChild(li);
     });
 
-    const staticTab = document.createElement("li");
-    staticTab.className = "nav-item";
-    staticTab.innerHTML = `
-      <a href="/custom-tab" class="nav-link d-flex align-items-center">
-        <span class="me-2"><i class="bi bi-star"></i></span>
-        <span class="menu-name">Xodimlar</span>
-      </a>`;
-    sidebarMenu.appendChild(staticTab);
+    
 
-    // Sabablar bo'limi (Xodimlar ostida)
-    const reasonsTab = document.createElement("li");
-    reasonsTab.className = "nav-item";
-    reasonsTab.innerHTML = `
-      <a href="/reasons" class="nav-link d-flex align-items-center">
-        <span class="me-2"><i class="bi bi-flag"></i></span>
-        <span class="menu-name">Sabablar</span>
-      </a>`;
-    sidebarMenu.appendChild(reasonsTab);
   }
 
   // Page ochilgan zahoti menu yuklanadi
