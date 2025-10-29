@@ -120,7 +120,7 @@ Route::middleware(['auth'])->group(function () {
             "verify" => false
         ])->post("https://my.synterra.uz/backs/menu/get_menu_new", [
             "sessionid" => $sessionId,
-"office_token"=>$_COOKIE['my-office-session']
+            "office_token"=>$_COOKIE['my-office-session']
         ]);
 
         return response()->json($response->json());
