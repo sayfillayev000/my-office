@@ -17,14 +17,16 @@ class EmployeeReasonItem extends Model
         'end_date',
         'start_datetime',
         'end_datetime',
-        'comment'
+        'comment',
+        'status'
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'start_datetime' => 'datetime',
-        'end_datetime' => 'datetime'
+        'end_datetime' => 'datetime',
+        'status' => 'string'
     ];
 
     public function employee()
