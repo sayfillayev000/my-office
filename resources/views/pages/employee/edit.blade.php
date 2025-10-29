@@ -1439,14 +1439,18 @@
                     </div>
 
                     <div id="user-hourly-fields" style="display:none;">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Sana <span class="text-danger">*</span></label>
+                            <input type="date" name="hourly_date" id="modal_hourly_date" class="form-control">
+                        </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Boshlanish</label>
-                                <input type="datetime-local" name="start_datetime" id="modal_start_datetime" class="form-control">
+                                <label class="form-label fw-semibold">Boshlanish vaqti <span class="text-danger">*</span></label>
+                                <input type="time" name="start_time" id="modal_start_time" class="form-control">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Tugash</label>
-                                <input type="datetime-local" name="end_datetime" id="modal_end_datetime" class="form-control">
+                                <label class="form-label fw-semibold">Tugash vaqti <span class="text-danger">*</span></label>
+                                <input type="time" name="end_time" id="modal_end_time" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -1511,14 +1515,18 @@
                     </div>
 
                     <div id="edit-user-hourly-fields" style="display:none;">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Sana <span class="text-danger">*</span></label>
+                            <input type="date" name="hourly_date" id="edit_modal_hourly_date" class="form-control">
+                        </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Boshlanish</label>
-                                <input type="datetime-local" name="start_datetime" id="edit_modal_start_datetime" class="form-control">
+                                <label class="form-label fw-semibold">Boshlanish vaqti <span class="text-danger">*</span></label>
+                                <input type="time" name="start_time" id="edit_modal_start_time" class="form-control">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Tugash</label>
-                                <input type="datetime-local" name="end_datetime" id="edit_modal_end_datetime" class="form-control">
+                                <label class="form-label fw-semibold">Tugash vaqti <span class="text-danger">*</span></label>
+                                <input type="time" name="end_time" id="edit_modal_end_time" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -4323,6 +4331,22 @@
 
             // Reset add modal form when closed
             document.getElementById('addUserReasonModal').addEventListener('hidden.bs.modal', function() {
+                // Remove any lingering backdrop
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => {
+                    if (!document.querySelector('.modal.show')) {
+                        backdrop.remove();
+                    }
+                });
+                
+                // Remove body classes if no modal is open
+                if (!document.querySelector('.modal.show')) {
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                }
+                
+                // Reset form
                 const form = document.getElementById('addEmployeeReasonForm');
                 if (form) {
                     form.reset();
@@ -4334,6 +4358,22 @@
 
             // Reset edit modal form when closed
             document.getElementById('editUserReasonModal').addEventListener('hidden.bs.modal', function() {
+                // Remove any lingering backdrop
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => {
+                    if (!document.querySelector('.modal.show')) {
+                        backdrop.remove();
+                    }
+                });
+                
+                // Remove body classes if no modal is open
+                if (!document.querySelector('.modal.show')) {
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                }
+                
+                // Reset form
                 const form = document.getElementById('editEmployeeReasonForm');
                 if (form) {
                     form.reset();
@@ -4344,20 +4384,39 @@
                 }
             });
 
-        // Load employee reasons list
+        // Load employee reasons list (real-time update)
         function loadEmployeeReasons(employeeId) {
             const tbody = document.getElementById('employeeReasonsTableBody');
+            if (!tbody) return;
+            
+            // Show loading
             tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yuklanmoqda...</span></div></td></tr>';
             
+            // Safely destroy existing DataTable if exists
+            try {
+                if (typeof $ !== 'undefined' && $.fn.DataTable && $.fn.DataTable.isDataTable('#employeeReasonsTable')) {
+                    const table = $('#employeeReasonsTable').DataTable();
+                    if (table) {
+                        table.destroy();
+                    }
+                }
+            } catch (e) {
+                console.warn('DataTable destroy warning:', e);
+            }
+            
             fetch(`/employee-reason-items/${employeeId}`)
-                .then(r => r.json())
+                .then(r => {
+                    if (!r.ok) throw new Error('Network error');
+                    return r.json();
+                })
                 .then(items => {
+                    if (!items || !Array.isArray(items)) {
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-danger">Ma\'lumotlar xato</td></tr>';
+                        return;
+                    }
+                    
                     if (!items.length) {
                         tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Sabablar mavjud emas</td></tr>';
-                        // Destroy existing DataTable if exists
-                        if ($.fn.DataTable.isDataTable('#employeeReasonsTable')) {
-                            $('#employeeReasonsTable').DataTable().destroy();
-                        }
                         return;
                     }
                     
@@ -4399,23 +4458,31 @@
                     });
                     tbody.innerHTML = html;
                     
-                    // Initialize DataTable if not already initialized
-                    if (!$.fn.DataTable.isDataTable('#employeeReasonsTable')) {
-                        $('#employeeReasonsTable').DataTable({
-                            responsive: true,
-                            searching: false,
-                            paging: false,
-                            info: false,
-                            lengthChange: false,
-                            columnDefs: [
-                                { orderable: false, targets: -1 }
-                            ]
-                        });
-                    } else {
-                        $('#employeeReasonsTable').DataTable().draw();
-                    }
+                    // Initialize DataTable with delay to ensure DOM is ready
+                    setTimeout(() => {
+                        try {
+                            if (typeof $ !== 'undefined' && $.fn.DataTable) {
+                                // Check if already initialized
+                                if (!$.fn.DataTable.isDataTable('#employeeReasonsTable')) {
+                                    $('#employeeReasonsTable').DataTable({
+                                        responsive: true,
+                                        searching: false,
+                                        paging: false,
+                                        info: false,
+                                        lengthChange: false,
+                                        columnDefs: [
+                                            { orderable: false, targets: -1 }
+                                        ]
+                                    });
+                                }
+                            }
+                        } catch (e) {
+                            console.error('DataTable initialization error:', e);
+                        }
+                    }, 100);
                 })
-                .catch(() => {
+                .catch(error => {
+                    console.error('Load reasons error:', error);
                     tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-danger">Xatolik yuz berdi</td></tr>';
                 });
         }
@@ -4485,13 +4552,35 @@
                 type: formData.get('reason_type'),
                 comment: formData.get('comment')
             };
+            
+            // Validation
+            if (!data.reason_id) {
+                alert('Iltimos, sababni tanlang!');
+                return;
+            }
+            
             if (data.type === 'daily') {
                 data.start_date = formData.get('start_date');
                 data.end_date = formData.get('end_date');
+                if (!data.start_date || !data.end_date) {
+                    alert('Iltimos, sanalarni to\'ldiring!');
+                    return;
+                }
             } else {
-                data.start_datetime = formData.get('start_datetime');
-                data.end_datetime = formData.get('end_datetime');
+                const hourlyDate = formData.get('hourly_date');
+                const startTime = formData.get('start_time');
+                const endTime = formData.get('end_time');
+                
+                if (!hourlyDate || !startTime || !endTime) {
+                    alert('Iltimos, sana va vaqtlarni to\'ldiring!');
+                    return;
+                }
+                
+                // Combine date and time into datetime
+                data.start_datetime = `${hourlyDate}T${startTime}:00`;
+                data.end_datetime = `${hourlyDate}T${endTime}:00`;
             }
+            
             fetch('/employee-reason-items', {
                 method: 'POST',
                 headers: {
@@ -4503,19 +4592,39 @@
             .then(r => r.json())
             .then(res => {
                 if (res.success) {
-                    bootstrap.Modal.getInstance(document.getElementById('addUserReasonModal')).hide();
-                    form.reset();
-                    toggleUserReasonType();
-                    loadEmployeeReasons({{ $employee->id }});
+                    // Close modal smoothly
+                    const modalElement = document.getElementById('addUserReasonModal');
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    
+                    if (modal) {
+                        modal.hide();
+                    } else {
+                        // Fallback
+                        if (typeof $ !== 'undefined') {
+                            $(modalElement).modal('hide');
+                        } else {
+                            modalElement.classList.remove('show');
+                            modalElement.style.display = 'none';
+                        }
+                    }
+                    
+                    // Real-time update table with delay to ensure modal is closed
+                    setTimeout(() => {
+                        loadEmployeeReasons({{ $employee->id }});
+                    }, 300);
                 } else {
                     alert('Xatolik: ' + (res.message || 'Noma\'lum xatolik'));
                 }
             })
-            .catch(() => alert('Xatolik yuz berdi!'));
+            .catch(error => {
+                console.error('Save error:', error);
+                alert('Xatolik yuz berdi!');
+            });
         }
 
         function deleteEmployeeReason(id, employeeId) {
             if (!confirm('Haqiqatan ham o\'chirmoqchimisiz?')) return;
+            
             fetch(`/employee-reason-items/${id}`, {
                 method: 'DELETE',
                 headers: {
@@ -4525,12 +4634,16 @@
             .then(r => r.json())
             .then(res => {
                 if (res.success) {
+                    // Real-time update table
                     loadEmployeeReasons(employeeId);
                 } else {
                     alert('Xatolik: ' + (res.message || 'Noma\'lum xatolik'));
                 }
             })
-            .catch(() => alert('Xatolik yuz berdi!'));
+            .catch(error => {
+                console.error('Delete error:', error);
+                alert('Xatolik yuz berdi!');
+            });
         }
 
         function editEmployeeReasonItem(id) {
@@ -4594,21 +4707,21 @@
                             document.getElementById('edit-user-daily-fields').style.display = 'block';
                             document.getElementById('edit-user-hourly-fields').style.display = 'none';
                         } else {
+                            // Parse datetime for hourly type
                             if (item.start_datetime) {
                                 const sdt = new Date(item.start_datetime);
                                 if (!isNaN(sdt.getTime())) {
-                                    startDateTime = sdt.toISOString().slice(0, 16);
+                                    document.getElementById('edit_modal_hourly_date').value = sdt.toISOString().split('T')[0];
+                                    document.getElementById('edit_modal_start_time').value = sdt.toTimeString().slice(0, 5);
                                 }
                             }
                             if (item.end_datetime) {
                                 const edt = new Date(item.end_datetime);
                                 if (!isNaN(edt.getTime())) {
-                                    endDateTime = edt.toISOString().slice(0, 16);
+                                    document.getElementById('edit_modal_end_time').value = edt.toTimeString().slice(0, 5);
                                 }
                             }
                             document.getElementById('edit_modal_reason_type_hourly').checked = true;
-                            document.getElementById('edit_modal_start_datetime').value = startDateTime;
-                            document.getElementById('edit_modal_end_datetime').value = endDateTime;
                             document.getElementById('edit-user-daily-fields').style.display = 'none';
                             document.getElementById('edit-user-hourly-fields').style.display = 'block';
                         }
@@ -4674,14 +4787,18 @@
                 data.start_datetime = null;
                 data.end_datetime = null;
             } else {
-                const startDatetime = formData.get('start_datetime');
-                const endDatetime = formData.get('end_datetime');
-                if (!startDatetime || !endDatetime) {
-                    alert('Iltimos, vaqtlarni to\'ldiring!');
+                const hourlyDate = formData.get('hourly_date');
+                const startTime = formData.get('start_time');
+                const endTime = formData.get('end_time');
+                
+                if (!hourlyDate || !startTime || !endTime) {
+                    alert('Iltimos, sana va vaqtlarni to\'ldiring!');
                     return;
                 }
-                data.start_datetime = startDatetime;
-                data.end_datetime = endDatetime;
+                
+                // Combine date and time into datetime
+                data.start_datetime = `${hourlyDate}T${startTime}:00`;
+                data.end_datetime = `${hourlyDate}T${endTime}:00`;
                 // Clear date fields
                 data.start_date = null;
                 data.end_date = null;
@@ -4705,11 +4822,21 @@
             })
             .then(res => {
                 if (res.success) {
-                    bootstrap.Modal.getInstance(document.getElementById('editUserReasonModal')).hide();
-                    form.reset();
-                    loadEmployeeReasons({{ $employee->id }});
-                    // Optional: Show success message
-                    // alert('Sabab muvaffaqiyatli yangilandi!');
+                    // Close modal first
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editUserReasonModal'));
+                    if (modal) {
+                        modal.hide();
+                    }
+                    
+                    // Reset form after a short delay
+                    setTimeout(() => {
+                        form.reset();
+                    }, 200);
+                    
+                    // Real-time update table with delay to ensure modal is closed
+                    setTimeout(() => {
+                        loadEmployeeReasons({{ $employee->id }});
+                    }, 300);
                 } else {
                     throw new Error(res.message || 'Noma\'lum xatolik');
                 }

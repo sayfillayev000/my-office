@@ -40,7 +40,18 @@
 
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Rang</label>
-                                <input type="color" name="color" id="reason_color" class="form-control form-control-color" value="#667eea">
+                                <div class="d-flex gap-2 align-items-center flex-wrap">
+                                    <input type="hidden" name="color" id="reason_color" value="#667eea">
+                                    <div class="color-option active" data-color="#667eea" onclick="selectColor('#667eea')" style="width: 40px; height: 40px; border-radius: 50%; background-color: #667eea; border: 3px solid #333; cursor: pointer; flex-shrink: 0;" title="#667eea"></div>
+                                    <div class="color-option" data-color="#f56565" onclick="selectColor('#f56565')" style="width: 40px; height: 40px; border-radius: 50%; background-color: #f56565; border: 3px solid #ddd; cursor: pointer; flex-shrink: 0;" title="#f56565"></div>
+                                    <div class="color-option" data-color="#48bb78" onclick="selectColor('#48bb78')" style="width: 40px; height: 40px; border-radius: 50%; background-color: #48bb78; border: 3px solid #ddd; cursor: pointer; flex-shrink: 0;" title="#48bb78"></div>
+                                    <div class="color-option" data-color="#ed8936" onclick="selectColor('#ed8936')" style="width: 40px; height: 40px; border-radius: 50%; background-color: #ed8936; border: 3px solid #ddd; cursor: pointer; flex-shrink: 0;" title="#ed8936"></div>
+                                    <div class="color-option" data-color="#4299e1" onclick="selectColor('#4299e1')" style="width: 40px; height: 40px; border-radius: 50%; background-color: #4299e1; border: 3px solid #ddd; cursor: pointer; flex-shrink: 0;" title="#4299e1"></div>
+                                    <div class="color-option" data-color="#9f7aea" onclick="selectColor('#9f7aea')" style="width: 40px; height: 40px; border-radius: 50%; background-color: #9f7aea; border: 3px solid #ddd; cursor: pointer; flex-shrink: 0;" title="#9f7aea"></div>
+                                    <div class="color-option" data-color="#38b2ac" onclick="selectColor('#38b2ac')" style="width: 40px; height: 40px; border-radius: 50%; background-color: #38b2ac; border: 3px solid #ddd; cursor: pointer; flex-shrink: 0;" title="#38b2ac"></div>
+                                    <div class="color-option" data-color="#e53e3e" onclick="selectColor('#e53e3e')" style="width: 40px; height: 40px; border-radius: 50%; background-color: #e53e3e; border: 3px solid #ddd; cursor: pointer; flex-shrink: 0;" title="#e53e3e"></div>
+                                </div>
+                                <small class="text-muted d-block mt-2">Rangni tanlash uchun bosing</small>
                             </div>
 
                             <div class="mb-3">
@@ -151,15 +162,37 @@ function saveReason() {
     .catch(() => alert('Xatolik yuz berdi!'));
 }
 
+function selectColor(color) {
+    // Set hidden input value
+    document.getElementById('reason_color').value = color;
+    
+    // Update visual selection
+    document.querySelectorAll('.color-option').forEach(option => {
+        if (option.dataset.color === color) {
+            option.classList.add('active');
+            option.style.border = '3px solid #333';
+            option.style.transform = 'scale(1.1)';
+        } else {
+            option.classList.remove('active');
+            option.style.border = '3px solid #ddd';
+            option.style.transform = 'scale(1)';
+        }
+    });
+}
+
 function editReason(id) {
     fetch(`/employee-reasons/${id}`)
         .then(r => r.json())
         .then(reason => {
             document.getElementById('reason_id').value = reason.id;
             document.getElementById('reason_name').value = reason.name;
-            document.getElementById('reason_color').value = reason.color || '#667eea';
+            const color = reason.color || '#667eea';
+            document.getElementById('reason_color').value = color;
             document.getElementById('reason_description').value = reason.description || '';
             document.getElementById('reason_is_active').checked = !!reason.is_active;
+            
+            // Select the color visually
+            selectColor(color);
         })
         .catch(() => alert('Xatolik yuz berdi!'));
 }
@@ -186,8 +219,27 @@ function resetReasonForm() {
     document.getElementById('reason_id').value = '';
     document.getElementById('reason_color').value = '#667eea';
     document.getElementById('reason_is_active').checked = true;
+    
+    // Reset color selection
+    selectColor('#667eea');
 }
 </script>
+
+<style>
+.color-option {
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.color-option:hover {
+    transform: scale(1.15) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.color-option.active {
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.2);
+}
+</style>
 @endsection
 
 

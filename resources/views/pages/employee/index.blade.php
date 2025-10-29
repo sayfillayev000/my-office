@@ -161,6 +161,13 @@
                                     <span>Qo'shimcha</span>
                                 </a>
                             </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link d-flex align-items-center justify-content-center py-3" 
+                                   id="tab-reasons-link" data-bs-toggle="tab" href="#tab-reasons" role="tab">
+                                    <i class="bi bi-flag me-2"></i>
+                                    <span>Sabablar</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -549,6 +556,27 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Sabablar -->
+                    <div class="tab-pane fade" id="tab-reasons" role="tabpanel">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-light">
+                                <h5 class="card-title mb-0 text-primary">
+                                    <i class="bi bi-flag me-2"></i>Sabablar
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="modal-reasons-list">
+                                    <div class="text-center py-5">
+                                        <div class="spinner-border text-primary mb-3" role="status">
+                                            <span class="visually-hidden">Yuklanmoqda...</span>
+                                        </div>
+                                        <p class="text-muted">Ma'lumotlar yuklanmoqda...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -604,14 +632,18 @@
 
                     <!-- Soatlik uchun maydonlar -->
                     <div id="hourly-fields" style="display: none;">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Sana <span class="text-danger">*</span></label>
+                            <input type="date" name="hourly_date" id="hourly_date" class="form-control" required>
+                        </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Boshlanish sanasi va vaqti <span class="text-danger">*</span></label>
-                                <input type="datetime-local" name="start_datetime" id="start_datetime" class="form-control">
+                                <label class="form-label fw-semibold">Boshlanish vaqti <span class="text-danger">*</span></label>
+                                <input type="time" name="start_time" id="start_time" class="form-control" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Tugash sanasi va vaqti <span class="text-danger">*</span></label>
-                                <input type="datetime-local" name="end_datetime" id="end_datetime" class="form-control">
+                                <label class="form-label fw-semibold">Tugash vaqti <span class="text-danger">*</span></label>
+                                <input type="time" name="end_time" id="end_time" class="form-control" required>
                             </div>
                         </div>
                     </div>
@@ -967,6 +999,86 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Qarindoshlarni yuklash
+    // Sabablar ma'lumotlarini yuklash (modal uchun)
+    function loadEmployeeReasons(employeeId) {
+        const reasonsList = document.getElementById('modal-reasons-list');
+        if (!reasonsList) return;
+        
+        fetch(`/employee-reason-items/${employeeId}`)
+            .then(r => {
+                if (!r.ok) throw new Error('Network error');
+                return r.json();
+            })
+            .then(items => {
+                if (!items || !Array.isArray(items)) {
+                    reasonsList.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="bi bi-flag text-muted fs-1"></i>
+                            <p class="text-muted mt-2">Sabablar ma'lumotlari mavjud emas</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                if (!items.length) {
+                    reasonsList.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="bi bi-flag text-muted fs-1"></i>
+                            <p class="text-muted mt-2">Sabablar mavjud emas</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '<div class="table-responsive"><table class="table table-hover align-middle">';
+                html += '<thead class="table-light"><tr>';
+                html += '<th>Turi</th>';
+                html += '<th>Davr</th>';
+                html += '<th>Sabab</th>';
+                html += '<th>Holati</th>';
+                html += '<th>Kommentariya</th>';
+                html += '</tr></thead><tbody>';
+                
+                items.forEach(it => {
+                    const typeBadge = it.type === 'daily' ? '<span class="badge bg-info">Kunlik</span>' : '<span class="badge bg-warning text-dark">Soatlik</span>';
+                    const statusBadge = it.status === 'ongoing' ? '<span class="badge bg-success">Davom etmoqda</span>' : '<span class="badge bg-secondary">Tugallangan</span>';
+                    const period = it.type === 'daily' ?
+                        (it.start_date ? new Date(it.start_date).toLocaleDateString('uz-UZ') : '') + 
+                        (it.end_date ? ' — ' + new Date(it.end_date).toLocaleDateString('uz-UZ') : '') :
+                        (it.start_datetime ? new Date(it.start_datetime).toLocaleString('uz-UZ') : '') + 
+                        (it.end_datetime ? ' — ' + new Date(it.end_datetime).toLocaleString('uz-UZ') : '');
+                    const reasonName = it.reason ? it.reason.name : '-';
+                    const reasonColor = it.reason && it.reason.color ? it.reason.color : '#667eea';
+                    const comment = it.comment ? (it.comment.length > 100 ? it.comment.substring(0, 100) + '...' : it.comment) : '-';
+                    
+                    html += `<tr>
+                        <td>${typeBadge}</td>
+                        <td>${period || '-'}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="badge me-2" style="background-color: ${reasonColor}">&nbsp;&nbsp;&nbsp;</span>
+                                <span>${reasonName}</span>
+                            </div>
+                        </td>
+                        <td>${statusBadge}</td>
+                        <td>${comment}</td>
+                    </tr>`;
+                });
+                
+                html += '</tbody></table></div>';
+                reasonsList.innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Load reasons error:', error);
+                reasonsList.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="bi bi-exclamation-triangle text-warning fs-1"></i>
+                        <p class="text-muted mt-2">Sabablar ma'lumotlarini yuklashda xatolik yuz berdi</p>
+                    </div>
+                `;
+            });
+    }
+
     function loadRelativesData(relatives) {
         const relativesList = document.getElementById('modal-relatives-list');
         
@@ -1123,8 +1235,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Global variable to store current employee ID for modal
+    let currentEmployeeId = null;
+
     function loadEmployeeData(employeeId) {
         console.log('Loading employee data for ID:', employeeId);
+        currentEmployeeId = employeeId; // Store current employee ID
         
         // Yuklanish indikatorini ko'rsatish
         document.getElementById('modal-education-list').innerHTML = `
@@ -1146,6 +1262,15 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         
         document.getElementById('modal-relatives-list').innerHTML = `
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Yuklanmoqda...</span>
+                </div>
+                <p class="text-muted">Ma'lumotlar yuklanmoqda...</p>
+            </div>
+        `;
+
+        document.getElementById('modal-reasons-list').innerHTML = `
             <div class="text-center py-5">
                 <div class="spinner-border text-primary mb-3" role="status">
                     <span class="visually-hidden">Yuklanmoqda...</span>
@@ -1209,6 +1334,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadEducationData(data.educations);
                 loadWorkExperience(data.work_experiences);
                 loadRelativesData(data.relatives);
+                
+                // Sabablar ma'lumotlarini yuklash
+                loadEmployeeReasons(employeeId);
 
                 // Modal sarlavhasini yangilash
                 document.getElementById('employeeModalLabel').textContent = 
@@ -1246,6 +1374,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p class="text-muted mt-2">Ma'lumotlarni yuklashda xatolik yuz berdi</p>
                     </div>
                 `;
+                document.getElementById('modal-reasons-list').innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="bi bi-exclamation-triangle text-warning fs-1"></i>
+                        <p class="text-muted mt-2">Ma'lumotlarni yuklashda xatolik yuz berdi</p>
+                    </div>
+                `;
             });
     }
 
@@ -1254,6 +1388,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const editBtn = document.getElementById('employeeEditBtn');
         if (editBtn) {
             editBtn.style.display = 'none';
+        }
+    });
+
+    // Sabablar tab bosilganda yuklash
+    document.getElementById('tab-reasons-link')?.addEventListener('shown.bs.tab', function() {
+        if (currentEmployeeId) {
+            loadEmployeeReasons(currentEmployeeId);
         }
     });
 
@@ -1268,6 +1409,40 @@ document.addEventListener('DOMContentLoaded', function() {
             loadReasons();
         }
     });
+
+    // Fix modal backdrop issue when closing addReasonModal
+    const addReasonModal = document.getElementById('addReasonModal');
+    if (addReasonModal) {
+        addReasonModal.addEventListener('hidden.bs.modal', function() {
+            // Remove any lingering backdrop
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => {
+                if (!document.querySelector('.modal.show')) {
+                    backdrop.remove();
+                }
+            });
+            
+            // Remove body classes if no modal is open
+            if (!document.querySelector('.modal.show')) {
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+            }
+            
+            // Reset form state
+            const form = document.getElementById('addReasonForm');
+            if (form) {
+                form.reset();
+                const dailyRadio = document.getElementById('reason_type_daily');
+                const hourlyRadio = document.getElementById('reason_type_hourly');
+                if (dailyRadio && hourlyRadio) {
+                    dailyRadio.checked = true;
+                    hourlyRadio.checked = false;
+                    toggleReasonType();
+                }
+            }
+        });
+    }
 });
 
 // Toggle between daily and hourly fields
@@ -1279,8 +1454,9 @@ function toggleReasonType() {
     if (isDaily) {
         dailyFields.style.display = 'block';
         hourlyFields.style.display = 'none';
-        document.getElementById('start_datetime').value = '';
-        document.getElementById('end_datetime').value = '';
+        document.getElementById('hourly_date').value = '';
+        document.getElementById('start_time').value = '';
+        document.getElementById('end_time').value = '';
     } else {
         dailyFields.style.display = 'none';
         hourlyFields.style.display = 'block';
@@ -1328,8 +1504,18 @@ function saveReason() {
         data.start_date = formData.get('start_date');
         data.end_date = formData.get('end_date');
     } else {
-        data.start_datetime = formData.get('start_datetime');
-        data.end_datetime = formData.get('end_datetime');
+        const hourlyDate = formData.get('hourly_date');
+        const startTime = formData.get('start_time');
+        const endTime = formData.get('end_time');
+        
+        if (!hourlyDate || !startTime || !endTime) {
+            alert('Iltimos, sana va vaqtlarni to\'ldiring!');
+            return;
+        }
+        
+        // Combine date and time into datetime
+        data.start_datetime = `${hourlyDate}T${startTime}:00`;
+        data.end_datetime = `${hourlyDate}T${endTime}:00`;
     }
     
     // Validate
@@ -1340,11 +1526,6 @@ function saveReason() {
     
     if (data.type === 'daily' && (!data.start_date || !data.end_date)) {
         alert('Iltimos, sanalarni to\'ldiring!');
-        return;
-    }
-    
-    if (data.type === 'hourly' && (!data.start_datetime || !data.end_datetime)) {
-        alert('Iltimos, vaqtlarni to\'ldiring!');
         return;
     }
     
@@ -1360,9 +1541,21 @@ function saveReason() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Sabab muvaffaqiyatli qo\'shildi!');
-            bootstrap.Modal.getInstance(document.getElementById('addReasonModal')).hide();
-            form.reset();
+            // Close modal smoothly
+            const modalElement = document.getElementById('addReasonModal');
+            const modalInstance = bootstrap.Modal.getInstance(modalElement);
+            
+            if (modalInstance) {
+                modalInstance.hide();
+            } else {
+                // Fallback: use jQuery or direct hide
+                $(modalElement).modal('hide');
+            }
+            
+            // Show success message
+            setTimeout(() => {
+                alert('Sabab muvaffaqiyatli qo\'shildi!');
+            }, 100);
         } else {
             alert('Xatolik: ' + (data.message || 'Noma\'lum xatolik'));
         }
