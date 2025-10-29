@@ -604,12 +604,12 @@
                     <!-- Sabab turi -->
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Sabab turi</label>
-                        <div class="d-flex gap-3">
-                            <div class="form-check form-check-inline">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="form-check">
                                 <input class="form-check-input" type="radio" name="reason_type" id="reason_type_daily" value="daily" checked onchange="toggleReasonType()">
                                 <label class="form-check-label" for="reason_type_daily">Kunlik</label>
                             </div>
-                            <div class="form-check form-check-inline">
+                            <div class="form-check">
                                 <input class="form-check-input" type="radio" name="reason_type" id="reason_type_hourly" value="hourly" onchange="toggleReasonType()">
                                 <label class="form-check-label" for="reason_type_hourly">Soatlik</label>
                             </div>
@@ -633,17 +633,19 @@
                     <!-- Soatlik uchun maydonlar -->
                     <div id="hourly-fields" style="display: none;">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Sana <span class="text-danger">*</span></label>
-                            <input type="date" name="hourly_date" id="hourly_date" class="form-control" required>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Boshlanish vaqti <span class="text-danger">*</span></label>
-                                <input type="time" name="start_time" id="start_time" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Tugash vaqti <span class="text-danger">*</span></label>
-                                <input type="time" name="end_time" id="end_time" class="form-control" required>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Sana <span class="text-danger">*</span></label>
+                                    <input type="date" name="hourly_date" id="hourly_date" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Boshlanish vaqti <span class="text-danger">*</span></label>
+                                    <input type="time" name="start_time" id="start_time" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Tugash vaqti <span class="text-danger">*</span></label>
+                                    <input type="time" name="end_time" id="end_time" class="form-control" required>
+                                </div>
                             </div>
                         </div>
                     </div>
