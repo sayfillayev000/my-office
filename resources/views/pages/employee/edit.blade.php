@@ -1413,12 +1413,12 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Turi</label>
-                        <div class="d-flex gap-3">
-                            <div class="form-check form-check-inline">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="form-check">
                                 <input class="form-check-input" type="radio" name="reason_type" id="modal_reason_type_daily" value="daily" checked onchange="toggleUserReasonType()">
                                 <label class="form-check-label" for="modal_reason_type_daily">Kunlik</label>
                             </div>
-                            <div class="form-check form-check-inline">
+                            <div class="form-check">
                                 <input class="form-check-input" type="radio" name="reason_type" id="modal_reason_type_hourly" value="hourly" onchange="toggleUserReasonType()">
                                 <label class="form-check-label" for="modal_reason_type_hourly">Soatlik</label>
                             </div>
@@ -1440,17 +1440,19 @@
 
                     <div id="user-hourly-fields" style="display:none;">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Sana <span class="text-danger">*</span></label>
-                            <input type="date" name="hourly_date" id="modal_hourly_date" class="form-control">
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Boshlanish vaqti <span class="text-danger">*</span></label>
-                                <input type="time" name="start_time" id="modal_start_time" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Tugash vaqti <span class="text-danger">*</span></label>
-                                <input type="time" name="end_time" id="modal_end_time" class="form-control">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Sana <span class="text-danger">*</span></label>
+                                    <input type="date" name="hourly_date" id="modal_hourly_date" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Boshlanish vaqti <span class="text-danger">*</span></label>
+                                    <input type="time" name="start_time" id="modal_start_time" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Tugash vaqti <span class="text-danger">*</span></label>
+                                    <input type="time" name="end_time" id="modal_end_time" class="form-control">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1489,12 +1491,12 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Turi</label>
-                        <div class="d-flex gap-3">
-                            <div class="form-check form-check-inline">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="form-check">
                                 <input class="form-check-input" type="radio" name="reason_type" id="edit_modal_reason_type_daily" value="daily" onchange="toggleEditUserReasonType()">
                                 <label class="form-check-label" for="edit_modal_reason_type_daily">Kunlik</label>
                             </div>
-                            <div class="form-check form-check-inline">
+                            <div class="form-check">
                                 <input class="form-check-input" type="radio" name="reason_type" id="edit_modal_reason_type_hourly" value="hourly" onchange="toggleEditUserReasonType()">
                                 <label class="form-check-label" for="edit_modal_reason_type_hourly">Soatlik</label>
                             </div>
@@ -1516,17 +1518,19 @@
 
                     <div id="edit-user-hourly-fields" style="display:none;">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Sana <span class="text-danger">*</span></label>
-                            <input type="date" name="hourly_date" id="edit_modal_hourly_date" class="form-control">
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Boshlanish vaqti <span class="text-danger">*</span></label>
-                                <input type="time" name="start_time" id="edit_modal_start_time" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Tugash vaqti <span class="text-danger">*</span></label>
-                                <input type="time" name="end_time" id="edit_modal_end_time" class="form-control">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Sana <span class="text-danger">*</span></label>
+                                    <input type="date" name="hourly_date" id="edit_modal_hourly_date" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Boshlanish vaqti <span class="text-danger">*</span></label>
+                                    <input type="time" name="start_time" id="edit_modal_start_time" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Tugash vaqti <span class="text-danger">*</span></label>
+                                    <input type="time" name="end_time" id="edit_modal_end_time" class="form-control">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -4416,7 +4420,36 @@
                     }
                     
                     if (!items.length) {
-                        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Sabablar mavjud emas</td></tr>';
+                        // Keep table structure even when empty to prevent column collapse
+                        tbody.innerHTML = `<tr>
+                            <td class="dtr-control"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-center py-4 text-muted">Sabablar mavjud emas</td>
+                        </tr>`;
+                        // Still initialize DataTable to maintain structure
+                        setTimeout(() => {
+                            try {
+                                if (typeof $ !== 'undefined' && $.fn.DataTable) {
+                                    if (!$.fn.DataTable.isDataTable('#employeeReasonsTable')) {
+                                        $('#employeeReasonsTable').DataTable({
+                                            responsive: true,
+                                            searching: false,
+                                            paging: false,
+                                            info: false,
+                                            lengthChange: false,
+                                            columnDefs: [
+                                                { orderable: false, targets: -1 }
+                                            ]
+                                        });
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('DataTable initialization error:', e);
+                            }
+                        }, 100);
                         return;
                     }
                     
