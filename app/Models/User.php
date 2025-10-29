@@ -152,5 +152,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(MenyuEmployeeadditionalinfo::class, 'employee_id');
     }
+
+    public function employeeReasonItems()
+    {
+        return $this->hasMany(EmployeeReasonItem::class, 'employee_id');
+    }
     
 }

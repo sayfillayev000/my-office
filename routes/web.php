@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\ReasonController;
 
 // Authentication routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -133,4 +134,26 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/applications', [ApplicationController::class, 'index'])->name('applications.index');
     Route::post('/applications/{application}/update', [ApplicationController::class, 'updateStatus'])->name('applications.update');
+
+    // ======================== REASON ROUTES ========================
+    
+    // Reasons management (for admin)
+    Route::get('/employee-reasons', [ReasonController::class, 'getReasons'])
+        ->name('employee.reasons.get');
+    Route::get('/employee-reasons/{id}', [ReasonController::class, 'getReason'])
+        ->name('employee.reasons.show');
+    Route::post('/employee-reasons', [ReasonController::class, 'store'])
+        ->name('employee.reasons.store');
+    Route::put('/employee-reasons/{id}', [ReasonController::class, 'update'])
+        ->name('employee.reasons.update');
+    Route::delete('/employee-reasons/{id}', [ReasonController::class, 'destroy'])
+        ->name('employee.reasons.destroy');
+    
+    // Employee reason items
+    Route::get('/employee-reason-items/{employeeId}', [ReasonController::class, 'getEmployeeReasonItems'])
+        ->name('employee.reason-items.get');
+    Route::post('/employee-reason-items', [ReasonController::class, 'storeEmployeeReasonItem'])
+        ->name('employee.reason-items.store');
+    Route::delete('/employee-reason-items/{id}', [ReasonController::class, 'deleteEmployeeReasonItem'])
+        ->name('employee.reason-items.delete');
 });
