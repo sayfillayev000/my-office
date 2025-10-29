@@ -118,8 +118,9 @@ Route::middleware(['auth'])->group(function () {
             "Content-Type" => "application/json"
         ])->withOptions([
             "verify" => false
-        ])->post("https://my.synterra.uz/backs/menu/get_list", [
-            "sessionid" => $sessionId
+        ])->post("https://my.synterra.uz/backs/menu/get_menu_new", [
+            "sessionid" => $sessionId,
+"office_token"=>$_COOKIE['my-office-session']
         ]);
 
         return response()->json($response->json());
