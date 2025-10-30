@@ -129,7 +129,6 @@ Route::middleware(['auth'])->group(function () {
             "sessionid" => $sessionId,
             "office_token"=>$_COOKIE['my-office-session']
         ]);
-
         return response()->json($response->json());
     });
 

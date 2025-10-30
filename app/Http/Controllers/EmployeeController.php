@@ -84,8 +84,8 @@ class EmployeeController extends Controller
     public function show(User $employee)
     {
         try {
-            \Log::info('=== SHOW METHOD CALLED ===');
-            \Log::info('Loading employee data for ID: ' . $employee->id);
+            Log::info('=== SHOW METHOD CALLED ===');
+            Log::info('Loading employee data for ID: ' . $employee->id);
             
             // Har bir relationshipni alohida yuklab ko'ramiz
             $employee->load([
@@ -102,7 +102,7 @@ class EmployeeController extends Controller
                 'relatives'
             ]);
     
-            \Log::info('Employee loaded successfully');
+            Log::info('Employee loaded successfully');
     
             $response = [
                 'id' => $employee->id,
