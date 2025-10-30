@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\ReasonController;
+use App\Http\Controllers\LogsController;
 
 // Authentication routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -167,4 +168,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('employee.reason-items.update');
     Route::delete('/employee-reason-items/{id}', [ReasonController::class, 'deleteEmployeeReasonItem'])
         ->name('employee.reason-items.delete');
+
+    // ======================== LOGS ROUTES ========================
+    Route::get('/logs', [LogsController::class, 'index'])->name('logs.index');
+    Route::get('/logs/{organizationId}', [LogsController::class, 'organizationView'])
+        ->where('organizationId', '[0-9]+')
+        ->name('logs.organization');
 });
