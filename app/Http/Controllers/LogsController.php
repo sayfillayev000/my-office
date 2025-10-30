@@ -6,6 +6,7 @@ use App\Models\MenyuOrganization;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class LogsController extends Controller
 {
@@ -107,8 +108,8 @@ class LogsController extends Controller
                 'project_name' => $r->project_name ?? '-',
                 'first_in' => $r->first_in,
                 'last_out' => $r->last_out,
-                'entry_photo' => $entry->photo ?? null,
-                'exit_photo' => $exit->photo ?? null,
+                'entry_photo' => $this->buildPhotoUrl($entry->photo ?? null),
+                'exit_photo' => $this->buildPhotoUrl($exit->photo ?? null),
                 'turniket_ip' => $entry->turniket_ip ?? $exit->turniket_ip ?? null,
             ];
         });
@@ -116,6 +117,19 @@ class LogsController extends Controller
             'success' => true,
             'data' => $data,
         ]);
+    }
+
+    private function buildPhotoUrl(?string $filename): ?string
+    {
+        if (empty($filename)) {
+            return null;
+        }
+        if (str_starts_with($filename, 'http://') || str_starts_with($filename, 'https://')) {
+            return $filename;
+        }
+        // WorkerLog photos are served from external media server
+        $base = 'http://84.54.118.39:8444/media/media_uploads/';
+        return rtrim($base, '/') . '/' . ltrim($filename, '/');
     }
 
     public function organizationView(Request $request, int $organizationId)
