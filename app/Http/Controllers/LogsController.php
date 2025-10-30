@@ -24,15 +24,22 @@ class LogsController extends Controller
     {
         $period = $request->string('period', 'daily')->toString();
         $isKitchen = $request->boolean('kitchen', false);
-        $dateInput = $request->input('date');
-        $date = $dateInput ? Carbon::parse($dateInput) : Carbon::now();
+        $year = (int) ($request->input('year') ?: now()->year);
+        $month = $request->input('month');
+        $day = $request->input('day');
+        $name = trim((string) $request->input('name', ''));
+        $departmentFilter = $request->input('department');
 
-        // Date range
-        $start = ($period === 'daily') ? $date->copy()->startOfDay() : $date->copy()->startOfMonth();
-        $end = ($period === 'daily') ? $date->copy()->endOfDay() : $date->copy()->endOfMonth();
-        if ($period === 'monthly') {
-            $start = now()->startOfMonth();
-            $end = now()->endOfMonth();
+        // Date range (year/month/day are independent filters)
+        if (!empty($day) && !empty($month)) {
+            $start = Carbon::createFromDate($year, (int)$month, (int)$day, now()->timezone)->startOfDay();
+            $end = Carbon::createFromDate($year, (int)$month, (int)$day, now()->timezone)->endOfDay();
+        } elseif (!empty($month)) {
+            $start = Carbon::createFromDate($year, (int)$month, 1, now()->timezone)->startOfMonth();
+            $end = Carbon::createFromDate($year, (int)$month, 1, now()->timezone)->endOfMonth();
+        } else {
+            $start = Carbon::createFromDate($year, 1, 1, now()->timezone)->startOfYear();
+            $end = Carbon::createFromDate($year, 1, 1, now()->timezone)->endOfYear();
         }
 
         // Base table and dynamic column names
@@ -45,6 +52,7 @@ class LogsController extends Controller
         $query = DB::table($table . ' as wl')
             ->leftJoin('Menyu_employee as e', 'e.id', '=', DB::raw("wl.{$employeeCol}"))
             ->leftJoin('Menyu_turniketsettings as t', 't.id', '=', 'wl.turniket_id')
+            ->leftJoin('Menyu_organization as o', 'o.id', '=', 'wl.organization_id')
             ->where('wl.organization_id', $organizationId)
             ->whereBetween('wl.date', [$start, $end]);
 
@@ -55,15 +63,33 @@ class LogsController extends Controller
 
         $query->selectRaw("wl.{$employeeCol} as employee_id")
             ->selectRaw("COALESCE(e.first_name || ' ' || e.last_name, e.first_name, '-') as employee_name")
+            ->addSelect('e.department as department')
+            ->addSelect('o.name as organization_name')
             ->selectRaw($isKitchen ? "NULL as project_name" : 'p.name as project_name')
             ->selectRaw('MIN(wl.date) as first_in')
             ->selectRaw('MAX(wl.date) as last_out')
             ->selectRaw('MIN(wl.id) as first_id')
             ->selectRaw('MAX(wl.id) as last_id')
-            ->groupBy(DB::raw("wl.{$employeeCol}"), 'e.first_name', 'e.last_name');
+            ->groupBy(
+                DB::raw("wl.{$employeeCol}"),
+                'e.first_name',
+                'e.last_name',
+                'e.department',
+                'o.name'
+            );
 
         if (!$isKitchen) {
             $query->groupBy('p.name');
+        }
+
+        // Filters: name and department
+        if ($name !== '') {
+            $like = '%' . mb_strtolower($name) . '%';
+            $query->whereRaw("LOWER(COALESCE(e.first_name,'') || ' ' || COALESCE(e.last_name,'')) LIKE ?", [$like]);
+        }
+
+        if (!empty($departmentFilter)) {
+            $query->where('e.department', $departmentFilter);
         }
 
         $rows = $query->orderBy('employee_name')->get();
@@ -105,6 +131,8 @@ class LogsController extends Controller
             return [
                 'employee_id' => $r->employee_id,
                 'employee_name' => $r->employee_name ?? '-',
+                'department' => $r->department ?? '-',
+                'organization' => $r->organization_name ?? '-',
                 'project_name' => $r->project_name ?? '-',
                 'first_in' => $r->first_in,
                 'last_out' => $r->last_out,
@@ -136,8 +164,11 @@ class LogsController extends Controller
     {
         $period = $request->string('period', 'daily')->toString();
         $isKitchen = $request->boolean('kitchen', false);
-        $dateInput = $request->input('date');
-        $date = $dateInput ? Carbon::parse($dateInput) : Carbon::now();
+        $year = (int) ($request->input('year') ?: now()->year);
+        $month = $request->input('month');
+        $day = $request->input('day');
+        $name = trim((string) $request->input('name', ''));
+        $departmentFilter = $request->input('department');
 
         $organization = MenyuOrganization::select(['id','name'])->findOrFail($organizationId);
 
@@ -145,17 +176,35 @@ class LogsController extends Controller
         $json = $this->organizationLogs(new Request([
             'period' => $period,
             'kitchen' => $isKitchen,
-            'date' => $date->toDateString(),
+            'year' => $year,
+            'month' => $month,
+            'day' => $day,
+            'name' => $name,
+            'department' => $departmentFilter,
         ]), $organizationId);
 
         $payload = $json->getData(true);
         $rows = $payload['data'] ?? [];
 
+        // Build department options for filters (distinct within this org)
+        $departments = \Illuminate\Support\Facades\DB::table('Menyu_employee')
+            ->where('organization_id', $organizationId)
+            ->whereNotNull('department')
+            ->select('department')
+            ->distinct()
+            ->orderBy('department')
+            ->pluck('department');
+
         return view('pages.logs.organization', [
             'organization' => $organization,
             'period' => $period,
             'kitchen' => $isKitchen,
-            'date' => $date->toDateString(),
+            'year' => $year,
+            'month' => $month,
+            'day' => $day,
+            'name' => $name,
+            'department' => $departmentFilter,
+            'departments' => $departments,
             'rows' => $rows,
         ]);
     }
