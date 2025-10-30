@@ -13,23 +13,58 @@
         <form method="GET" class="row g-3 align-items-end mb-3">
             <input type="hidden" name="period" value="{{ $period }}">
             <input type="hidden" name="kitchen" value="{{ $kitchen ? 1 : 0 }}">
-            <div class="col-auto">
-                <label class="form-label fw-semibold">Sana</label>
-                <input type="date" name="date" value="{{ $date }}" class="form-control">
+            <div class="col-md-2">
+                <label class="form-label fw-semibold">Yil</label>
+                <select name="year" class="form-select">
+                    @for($y = now()->year; $y >= now()->year - 5; $y--)
+                        <option value="{{ $y }}" {{ ($year ?? now()->year) == $y ? 'selected' : '' }}>{{ $y }}</option>
+                    @endfor
+                </select>
             </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-primary"><i class="bi bi-funnel me-1"></i> Filter</button>
+            <div class="col-md-2">
+                <label class="form-label fw-semibold">Oy</label>
+                <select name="month" class="form-select">
+                    <option value="">Barchasi</option>
+                    @for($m = 1; $m <= 12; $m++)
+                        <option value="{{ $m }}" {{ (int)($month ?? 0) === $m ? 'selected' : '' }}>{{ sprintf('%02d', $m) }}</option>
+                    @endfor
+                </select>
             </div>
-            <div class="col text-center">
+            <div class="col-md-2">
+                <label class="form-label fw-semibold">Kun</label>
+                <select name="day" class="form-select">
+                    <option value="">Barchasi</option>
+                    @for($d = 1; $d <= 31; $d++)
+                        <option value="{{ $d }}" {{ (int)($day ?? 0) === $d ? 'selected' : '' }}>{{ sprintf('%02d', $d) }}</option>
+                    @endfor
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">To'liq ism</label>
+                <input type="text" name="name" value="{{ $name }}" class="form-control" placeholder="Ism familya...">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-semibold">Bo'lim</label>
+                <select name="department" class="form-select">
+                    <option value="">Barchasi</option>
+                    @foreach(($departments ?? []) as $dep)
+                        <option value="{{ $dep }}" {{ ($department ?? '') === $dep ? 'selected' : '' }}>{{ $dep }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel me-1"></i></button>
+            </div>
+            <div class="col-12 text-center">
                 <div class="btn-group" role="group" aria-label="Tabs">
-                    <a href="{{ route('logs.organization', ['organizationId' => $organization->id, 'period' => $period, 'date' => $date, 'kitchen' => 0]) }}" class="btn {{ !$kitchen ? 'btn-primary' : 'btn-outline-primary' }}">Kirish/Chiqish</a>
-                    <a href="{{ route('logs.organization', ['organizationId' => $organization->id, 'period' => $period, 'date' => $date, 'kitchen' => 1]) }}" class="btn {{ $kitchen ? 'btn-success' : 'btn-outline-success' }}">Oshxona</a>
+                    <a href="{{ route('logs.organization', ['organizationId' => $organization->id, 'period' => $period, 'kitchen' => 0, 'year' => $year, 'month' => $month, 'day' => $day, 'name' => $name, 'department' => $department]) }}" class="btn {{ !$kitchen ? 'btn-primary' : 'btn-outline-primary' }}">Kirish/Chiqish</a>
+                    <a href="{{ route('logs.organization', ['organizationId' => $organization->id, 'period' => $period, 'kitchen' => 1, 'year' => $year, 'month' => $month, 'day' => $day, 'name' => $name, 'department' => $department]) }}" class="btn {{ $kitchen ? 'btn-success' : 'btn-outline-success' }}">Oshxona</a>
                 </div>
             </div>
             <div class="col-auto">
                 <div class="btn-group" role="group">
-                    <a href="{{ route('logs.organization', ['organizationId' => $organization->id, 'period' => 'daily', 'date' => $date, 'kitchen' => $kitchen ? 1 : 0]) }}" class="btn {{ $period==='daily' ? 'btn-dark' : 'btn-outline-dark' }}">Kunlik</a>
-                    <a href="{{ route('logs.organization', ['organizationId' => $organization->id, 'period' => 'monthly', 'date' => $date, 'kitchen' => $kitchen ? 1 : 0]) }}" class="btn {{ $period==='monthly' ? 'btn-dark' : 'btn-outline-dark' }}">Oylik</a>
+                    <a href="{{ route('logs.organization', ['organizationId' => $organization->id, 'period' => 'daily', 'kitchen' => $kitchen ? 1 : 0, 'year' => $year, 'month' => $month, 'day' => $day, 'name' => $name, 'department' => $department]) }}" class="btn {{ $period==='daily' ? 'btn-dark' : 'btn-outline-dark' }}">Kunlik</a>
+                    <a href="{{ route('logs.organization', ['organizationId' => $organization->id, 'period' => 'monthly', 'kitchen' => $kitchen ? 1 : 0, 'year' => $year, 'month' => $month, 'day' => $day, 'name' => $name, 'department' => $department]) }}" class="btn {{ $period==='monthly' ? 'btn-dark' : 'btn-outline-dark' }}">Oylik</a>
                 </div>
             </div>
         </form>
@@ -38,10 +73,9 @@
             <table class="table w-100 nowrap table-striped" id="logsTable">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Employee ID</th>
-                        <th>Xodim</th>
-                        <th>Obyekt/Loyiha</th>
+                        <th>To'liq ism</th>
+                        <th>Bo'lim</th>
+                        <th>Tashkilot</th>
                         <th>Kirish</th>
                         <th>Chiqish</th>
                         <th>Turniket IP</th>
@@ -52,10 +86,9 @@
                 <tbody>
                 @forelse($rows as $i => $r)
                     <tr>
-                        <td>{{ $i+1 }}</td>
-                        <td>{{ $r['employee_id'] ?? '-' }}</td>
                         <td>{{ $r['employee_name'] ?? '-' }}</td>
-                        <td>{{ $r['project_name'] ?? '-' }}</td>
+                        <td>{{ $r['department'] ?? '-' }}</td>
+                        <td>{{ $r['organization'] ?? '-' }}</td>
                         <td>{{ !empty($r['first_in']) ? \Carbon\Carbon::parse($r['first_in'])->format('d.m.Y H:i') : '-' }}</td>
                         <td>{{ !empty($r['last_out']) ? \Carbon\Carbon::parse($r['last_out'])->format('d.m.Y H:i') : '-' }}</td>
                         <td><code>{{ $r['turniket_ip'] ?? '-' }}</code></td>

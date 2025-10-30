@@ -80,18 +80,68 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderMenu(menu) {
     sidebarMenu.innerHTML = "";
-    Object.values(menu).forEach(m => {
-      const li = document.createElement("li");
-      li.className = "nav-item";
-      li.innerHTML = `
-        <a href="${m.path}" class="nav-link d-flex align-items-center">
-          <span class="me-2">${m.svg_icon}</span>
-          <span class="menu-name">${m.name}</span>
-        </a>`;
-      sidebarMenu.appendChild(li);
+
+    const items = Object.values(menu || {});
+    const idToChildren = new Map();
+    const idToItem = new Map();
+    items.forEach(it => {
+      idToItem.set(it.id, it);
+      const pid = it.pid ?? 0;
+      if (!idToChildren.has(pid)) idToChildren.set(pid, []);
+      idToChildren.get(pid).push(it);
     });
 
-    
+    function renderNode(node) {
+      const children = idToChildren.get(node.id) || [];
+      const hasChildren = children.length > 0;
+      const li = document.createElement('li');
+      li.className = 'nav-item';
+
+      if (hasChildren) {
+        const collapseId = `submenu-${node.id}`;
+        li.innerHTML = `
+          <a href="#" class="nav-link d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="false">
+            <span class="me-2">${node.svg_icon ?? ''}</span>
+            <span class="menu-name">${node.name}</span>
+            <span class="ms-auto small"><i class="bi bi-chevron-down"></i></span>
+          </a>
+          <div id="${collapseId}" class="collapse">
+            <ul class="nav flex-column ms-3 my-2">
+            </ul>
+          </div>`;
+        const ul = li.querySelector('ul');
+        children.forEach(ch => ul.appendChild(renderLeaf(ch)));
+      } else {
+        li.appendChild(renderLeaf(node));
+      }
+      return li;
+    }
+
+    function renderLeaf(item) {
+      const a = document.createElement('a');
+      a.className = 'nav-link d-flex align-items-center';
+      a.href = item.path || '#';
+      a.innerHTML = `
+        <span class="me-2">${item.svg_icon ?? ''}</span>
+        <span class="menu-name">${item.name}</span>`;
+      const li = document.createElement('li');
+      li.className = 'nav-item';
+      li.appendChild(a);
+      return li;
+    }
+
+    // Render roots (pid null/0)
+    (idToChildren.get(0) || idToChildren.get(null) || [])
+      .forEach(root => sidebarMenu.appendChild(renderNode(root)));
+
+    const staticTab = document.createElement("li");
+    staticTab.className = "nav-item";
+    staticTab.innerHTML = `
+      <a href="/custom-tab" class="nav-link d-flex align-items-center">
+        <span class="me-2"><i class="bi bi-star"></i></span>
+        <span class="menu-name">Xodimlar</span>
+      </a>`;
+    sidebarMenu.appendChild(staticTab);
 
   }
 
