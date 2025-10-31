@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('employee_reason_items', function (Blueprint $table) {
-            $table->enum('status', ['ongoing', 'completed'])->default('ongoing')->after('comment');
+            $table->string('status')->default('ongoing');
         });
+
     }
 
     /**
