@@ -143,6 +143,7 @@ class User extends Authenticatable
             return false;
         }
     }
+    
 
     /*
      * Cache tozalash
