@@ -29,8 +29,6 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const sidebarMenu = document.getElementById("sidebar-menu");
-  if (!sidebarMenu) return;
-
   const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   const baseUrl = document.querySelector('meta[name="base-url"]').getAttribute('content');
 
@@ -40,13 +38,12 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         headers: {
           "X-CSRF-TOKEN": token,
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
         credentials: "include"
       });
-
       const data = await response.json();
-      console.log("📦 API menu data:", data);
+      console.log("API javob:", data);
 
       if (!data || Object.keys(data).length === 0) {
         sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Menu topilmadi</li>";
