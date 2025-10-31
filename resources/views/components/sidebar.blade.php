@@ -105,7 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       }
 
-<<<<<<< HEAD
     function renderLeaf(item) {
       const a = document.createElement('a');
       a.className = 'nav-link d-flex align-items-center';
@@ -132,10 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
       </a>`;
     sidebarMenu.appendChild(staticTab);
 
-=======
-      sidebarMenu.appendChild(li); // <---- BU juda muhim!
-    });
->>>>>>> master
       sidebarMenu.appendChild(li); // <---- BU juda muhim!
     });
   }
