@@ -32,32 +32,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   const baseUrl = document.querySelector('meta[name="base-url"]').getAttribute('content');
 
-  // 🍪 Cookie olish
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-  }
-
-  // 📥 Menu yuklash
   async function loadMenu() {
     try {
-      const sessionId = getCookie("sessionid");
-      const officeSession = getCookie("my-office-session");
-
-      if (!sessionId && !officeSession) {
-        sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Session topilmadi</li>";
-        return;
-      }
-
-      const response = await fetch(`${baseUrl}/proxy/menu`, {
+      const response = await fetch(baseUrl + "/proxy/menu", {
         method: "POST",
         headers: {
           "X-CSRF-TOKEN": token,
           "Content-Type": "application/json",
         },
-        credentials: "include",
+        credentials: "include"
       });
 
       const data = await response.json();
@@ -68,44 +51,55 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const menuArray = Object.values(data);
-      renderMenu(menuArray);
-    } catch (err) {
-      console.error("❌ Menu load error:", err);
+      renderMenu(data);
+    } catch (error) {
+      console.error("Menu load error:", error);
       sidebarMenu.innerHTML = "<li class='text-danger p-3'>❌ Xato yuz berdi</li>";
     }
   }
 
-  // 🧩 Menu render funksiyasi
-  function renderMenu(menuItems) {
+  function renderMenu(menuData) {
     sidebarMenu.innerHTML = "";
 
-    // rekursiv render
-    function renderNode(node) {
-      const hasChildren = Array.isArray(node.child) && node.child.length > 0;
+    Object.values(menuData).forEach((item, index) => {
+      const hasChildren = item.child && item.child.length > 0;
       const li = document.createElement("li");
-      li.className = "nav-item";
+      li.classList.add("nav-item");
 
       if (hasChildren) {
-        const collapseId = `submenu-${Math.random().toString(36).substr(2, 9)}`;
+        const collapseId = `collapse-${index}`;
         li.innerHTML = `
-          <a href="#" class="nav-link d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#${collapseId}">
-            <span class="me-2">${node.svg_icon ?? ""}</span>
-            <span class="menu-name">${node.name}</span>
+          <a href="#${collapseId}" 
+             class="nav-link d-flex align-items-center" 
+             data-bs-toggle="collapse" 
+             role="button" 
+             aria-expanded="false" 
+             aria-controls="${collapseId}">
+            <span class="me-2">${item.svg_icon ?? ''}</span>
+            <span class="menu-name">${item.name}</span>
             <span class="ms-auto small"><i class="bi bi-chevron-down"></i></span>
           </a>
-          <div id="${collapseId}" class="collapse" data-bs-parent="#sidebar-menu">
+          <div class="collapse" id="${collapseId}">
             <ul class="nav flex-column ms-3 my-2"></ul>
           </div>
         `;
 
         const ul = li.querySelector("ul");
-        node.child.forEach(child => ul.appendChild(renderNode(child)));
+        item.child.forEach(child => {
+          const childLi = document.createElement("li");
+          childLi.classList.add("nav-item");
+          childLi.innerHTML = `
+            <a href="${child.path}" class="nav-link d-flex align-items-center">
+              <span class="menu-name">${child.name}</span>
+            </a>
+          `;
+          ul.appendChild(childLi);
+        });
       } else {
         li.innerHTML = `
-          <a href="${node.path || "#"}" class="nav-link d-flex align-items-center">
-            <span class="me-2">${node.svg_icon ?? ""}</span>
-            <span class="menu-name">${node.name}</span>
+          <a href="${item.path}" class="nav-link d-flex align-items-center">
+            <span class="me-2">${item.svg_icon ?? ''}</span>
+            <span class="menu-name">${item.name}</span>
           </a>
         `;
       }
@@ -116,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
     menuItems.forEach(item => sidebarMenu.appendChild(renderNode(item)));
   }
 
-  // 🚀 Boshlang‘ich yuklash
   loadMenu();
 });
 </script>
