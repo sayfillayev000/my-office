@@ -113,7 +113,7 @@ Route::middleware(['auth'])->group(function () {
     // ======================== OTHER ROUTES ========================
 
 
-       Route::post('/proxy/menu', function (\Illuminate\Http\Request $request) {
+    Route::post('/proxy/menu', function (\Illuminate\Http\Request $request) {
         $sessionId = $request->input('sessionid');
 
         // Agar localda bo'lsa static session ishlatamiz

@@ -19,6 +19,7 @@
         <p class="small">Office</p>
       </div>
     </div>
+
     <ul id="sidebar-menu" class="nav flex-column menu-active-line"></ul>
 
     <div class="mt-auto"></div>
@@ -68,14 +69,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const collapseId = `collapse-${index}`;
         li.innerHTML = `
           <a href="#${collapseId}" 
-             class="nav-link d-flex align-items-center" 
+             class="nav-link d-flex align-items-center justify-content-between" 
              data-bs-toggle="collapse" 
              role="button" 
              aria-expanded="false" 
              aria-controls="${collapseId}">
-            <span class="me-2">${item.svg_icon ?? ''}</span>
-            <span class="menu-name">${item.name}</span>
-            <span class="ms-auto small"><i class="bi bi-chevron-down"></i></span>
+            <span class="d-flex align-items-center">
+              <span class="me-2">${item.svg_icon ?? ''}</span>
+              <span class="menu-name">${item.name}</span>
+            </span>
+            <i class="bi bi-chevron-down small"></i>
           </a>
           <div class="collapse" id="${collapseId}">
             <ul class="nav flex-column ms-3 my-2"></ul>
@@ -102,6 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       }
 
+<<<<<<< HEAD
     function renderLeaf(item) {
       const a = document.createElement('a');
       a.className = 'nav-link d-flex align-items-center';
@@ -128,6 +132,10 @@ document.addEventListener("DOMContentLoaded", () => {
       </a>`;
     sidebarMenu.appendChild(staticTab);
 
+=======
+      sidebarMenu.appendChild(li); // <---- BU juda muhim!
+    });
+>>>>>>> master
   }
 
   loadMenu();
