@@ -37,19 +37,27 @@
 
             <form method="POST" action="/sms-verify">
                 @csrf
+
+                @if ($errors->has('code'))
+                    <div class="alert alert-danger">
+                        {{ $errors->first('code') }}
+                    </div>
+                @endif
+
                 <div class="form-floating mb-3">
                     <input type="text" 
-                           class="form-control text-center fs-3" 
-                           id="code" 
-                           name="code" 
-                           maxlength="4" 
-                           placeholder="----" 
-                           required>
+                        class="form-control text-center fs-3" 
+                        id="code" 
+                        name="code" 
+                        maxlength="4" 
+                        placeholder="----" 
+                        required>
                     <label for="code">Kodni kiriting</label>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 mb-3">Tasdiqlash</button>
             </form>
+
 
             <div>
                 <small class="text-muted">Kodni olmadingizmi?</small><br>

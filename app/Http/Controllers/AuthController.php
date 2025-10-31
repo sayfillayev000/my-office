@@ -91,47 +91,51 @@ class AuthController extends Controller
             ->with('code', $code);
     }
 
-    public function verifySms(Request $request)
-    {
-        $request->validate([
-            'code' => 'required|digits:4',
-        ]);
+   public function verifySms(Request $request)
+{
+    $request->validate([
+        'code' => 'required|digits:4',
+    ]);
 
-        $phone   = Session::get('phone');
-        $orgId   = Session::get('organization_id');
-        $code    = Session::get('sms_code');
-        $expires = Session::get('sms_expires');
+    $phone   = Session::get('phone');
+    $orgId   = Session::get('organization_id');
+    $code    = Session::get('sms_code');
+    $expires = Session::get('sms_expires');
 
-        if ($request->code == $code && now()->lessThan($expires)) {
-            // Same normalization when verifying SMS
-            $employee = User::whereRaw("(case when regexp_replace(phone, '\\\\D', '', 'g') like '998%' then substr(regexp_replace(phone, '\\\\D', '', 'g'), 4) else regexp_replace(phone, '\\\\D', '', 'g') end) = ?", [$phone])
-                ->where('organization_id', $orgId)
-                ->first();
-
-            if (!$employee) {
-                return back()->withErrors(['code' => 'Foydalanuvchi topilmadi!']);
-            }
-
-            Auth::login($employee);
-            $request->session()->regenerate();
-
-            UserSession::updateOrCreate(
-                ['session_id' => Session::getId()],
-                [
-                    'user_id' => $employee->id,
-                    'organization_id' => $orgId,
-                ]
-            );
-
-            Session::forget(['sms_code', 'sms_expires']);
-
-            if(app()->environment('local')) {
-                return redirect()->to('/dashboard');
-            } else {
-                return redirect()->to('/dashboard');
-            }
-        }
-
-        return back()->withErrors(['code' => 'Kod noto‘g‘ri yoki muddati tugagan!']);
+    // 1️⃣ Kodni tekshirish
+    if ($request->code != $code) {
+        return back()->withErrors(['code' => '❌ Kiritilgan kod noto‘g‘ri!']);
     }
+
+    // 2️⃣ Muddati tugaganini tekshirish
+    if (now()->greaterThan($expires)) {
+        return back()->withErrors(['code' => '⚠️ Kod muddati tugagan!']);
+    }
+
+    // 3️⃣ Foydalanuvchini topish
+    $employee = User::where('phone', $phone)
+        ->where('organization_id', $orgId)
+        ->first();
+
+    if (!$employee) {
+        return back()->withErrors(['code' => 'Foydalanuvchi topilmadi!']);
+    }
+
+    // 4️⃣ Login
+    Auth::login($employee);
+    $request->session()->regenerate();
+
+    UserSession::updateOrCreate(
+        ['session_id' => Session::getId()],
+        [
+            'user_id' => $employee->id,
+            'organization_id' => $orgId,
+        ]
+    );
+
+    Session::forget(['sms_code', 'sms_expires']);
+
+    return redirect()->to('/backs/user/profile');
+}
+
 }
