@@ -105,6 +105,32 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       }
 
+    function renderLeaf(item) {
+      const a = document.createElement('a');
+      a.className = 'nav-link d-flex align-items-center';
+      a.href = item.path || '#';
+      a.innerHTML = `
+        <span class="me-2">${item.svg_icon ?? ''}</span>
+        <span class="menu-name">${item.name}</span>`;
+      const li = document.createElement('li');
+      li.className = 'nav-item';
+      li.appendChild(a);
+      return li;
+    }
+
+    // Render roots (pid null/0)
+    (idToChildren.get(0) || idToChildren.get(null) || [])
+      .forEach(root => sidebarMenu.appendChild(renderNode(root)));
+
+    const staticTab = document.createElement("li");
+    staticTab.className = "nav-item";
+    staticTab.innerHTML = `
+      <a href="/custom-tab" class="nav-link d-flex align-items-center">
+        <span class="me-2"><i class="bi bi-star"></i></span>
+        <span class="menu-name">Xodimlar</span>
+      </a>`;
+    sidebarMenu.appendChild(staticTab);
+
       sidebarMenu.appendChild(li); // <---- BU juda muhim!
     });
   }
