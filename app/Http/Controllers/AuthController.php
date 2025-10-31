@@ -134,8 +134,11 @@ class AuthController extends Controller
     );
 
     Session::forget(['sms_code', 'sms_expires']);
-
-    return redirect()->to('/backs/user/profile');
+    if(app()->environment('production')) {
+        return redirect()->to('/backs/user/profile')
+            ->with('status', '✅ Test muhitida muvaffaqiyatli kirdingiz!');
+    }
+    return redirect()->to('/dashboard');
 }
 
 }
