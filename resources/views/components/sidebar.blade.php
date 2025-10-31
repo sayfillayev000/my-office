@@ -136,6 +136,8 @@ document.addEventListener("DOMContentLoaded", () => {
       sidebarMenu.appendChild(li); // <---- BU juda muhim!
     });
 >>>>>>> master
+      sidebarMenu.appendChild(li); // <---- BU juda muhim!
+    });
   }
 
   loadMenu();
